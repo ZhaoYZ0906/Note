@@ -1,0 +1,4 @@
+int.tryparse(string,out int)
+将string尝试进行转化，如果成功返回true并将转换后的值赋给int，否则返回false
+
+int16/32/64 都存在常量值minvalue和maxvalue

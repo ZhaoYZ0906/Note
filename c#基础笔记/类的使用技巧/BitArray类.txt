@@ -1,0 +1,31 @@
+定义：
+管理位值的压缩数组，该值表示为布尔值，其中true表示位是打开的(1),false表示位是关闭的(0)
+可适用于二进制运算
+
+使用方法：
+注：默认值为false
+1 
+使用：BitArray myBA1 = new BitArray( 5 );
+存放状态： 
+     myBA1
+    Count:    5
+    Length:   5
+    False   False   False   False   False
+2
+BitArray myBA2 = new BitArray( 5, false );
+    Count:    5
+    Length:   5
+    False   False   False   False   False
+3
+       byte[] myBytes = new byte[5] { 1, 2, 3, 4, 5 };
+       BitArray myBA3 = new BitArray( myBytes );
+
+    myBA3
+    Count:    40
+    Length:   40
+    True   False   False   False   False   False   False   False=00000001（2）=1
+    False    True   False   False   False   False   False   False
+    True    True   False   False   False   False   False   False
+    False   False    True   False   False   False   False   False
+    True   False    True   False   False   False   False   False
+    二进制运算

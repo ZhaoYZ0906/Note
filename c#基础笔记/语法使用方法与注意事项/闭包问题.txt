@@ -1,0 +1,62 @@
+定义：内层的函数可以引用包含在它外层的函数的变量，即使外层函数的执行已经终止。但该变量提供的值并非变量创建时的值，而是在父函数范围内的最终值。
+闭包问题出现在lambda与匿名函数中
+
+
+string tipWords = "您将关闭当前对话框";
+       this.FormClosing += delegate
+       {
+            MessageBox.Show(tipWords);
+};
+
+优势：此时闭包调用方法外tipWords变量
+
+
+ for(int i = 0 ; i < 3; i++)
+            {
+                ThreadPool.QueueUserWorkItem((obj) =>
+                {
+                    Thread.Sleep(1000);
+                    UserModel u = userList[i];
+                    Console.WriteLine(u.UserName);
+                });
+ }
+劣势：此时userList[i];在3此循环中获取的为同一个对象，因为定义：
+该变量提供的值并非变量创建时的值，而是在父函数范围内的最终值
+提供的时最终值并且不会改变！并且闭包情况下，包内不能改变包外变量一切！为了线程安全！
+
+解决方法：
+C#中普遍的做法是，将匿名函数引用的变量用一个临时变量保存下来，然后在匿名函数中使用临时变量。
+for(int i = 0 ; i < 3; i++)
+{
+      UserModel u = userList[i];
+      ThreadPool.QueueUserWorkItem((obj) =>
+      {
+           Thread.Sleep(1000);                  
+           Console.WriteLine(u.UserName);
+      });
+ }
+
+
+
+底层规则：
+其实C#并不会对每个需要捕获的值类型变量进行装箱操作，
+而是把所有捕获的变量统统放到同一个大“箱子”里——当编译器遇到需要变量捕获的情况时，
+它会默默地在后台构造一个匿名类型，这个匿名类型包含了每一个闭包所捕获的变量（包括值类型变量和引用类型变量）
+作为它的一个公有字段。
+这样，编译器就可以维护那些在匿名函数或lambda表达式中出现的外部变量了。
+
+结果：编译器将闭包引用的局部变量转换为匿名类型的字段，导致了局部变量分配在堆中。
+
+
+
+
+
+
+
+
+
+
+
+
+
+

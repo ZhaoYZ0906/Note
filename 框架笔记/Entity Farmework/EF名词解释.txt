@@ -1,0 +1,18 @@
+导航属性与引用属性：
+public class A
+    {
+        public int AId{ get; set; }
+        public List<B> B1{ get; set; }//B1为classB的导航属性
+    }
+
+    public class B
+    {
+        public int BId{ get; set; }；
+        public int AId{ get; set; }；//在库中生成外键
+        public A A1{ get; set; }//A1为classA的引用属性
+    }
+根据导航属性和引用属性EF自动生成外键
+外键所在表中的 其它表属性为引用属性
+表中主键为其他表的外键时，此表中的其他表属性为导航属性
+A与B为一对多的关系，因为一个A中使用list存放一堆B所以一对多
+B与A为一对一关系，因为一个B中只有存放一个A

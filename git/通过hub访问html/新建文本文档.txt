@@ -1,0 +1,5 @@
+创建一个库名为：用户名.github.io
+库里面必须有一个index.html页面
+通过浏览器 https://用户名.github.io/可以访问
+
+注意：必须为静态网页，只支持html

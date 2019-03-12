@@ -1,0 +1,29 @@
+public class Startup
+    {      
+        //负责注册服务
+        public void ConfigureServices(IServiceCollection services)
+        {            
+            //注册服务AddTransient每访问一个事件生成一个myWelcome,AddSingleton单例生成一个myWelcome,AddScoped每次请求生成一个myWelcome
+            services.AddScoped<IMyWelcome,myWelcome>();
+        }       
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IMyWelcome myWelcome)
+        {
+            //env存储当前的环境信息例如：开发环境，演示环境，生产环境等
+            //如果为开发环境则进入
+            //当前环境可以在launchSettings.json中的profiles（此时指vsocd运行）的"ASPNETCORE_ENVIRONMENT"=“环境名”或者bilicore（命令行运行）的"ASPNETCORE_ENVIRONMENT"=“环境名”
+            if (env.IsDevelopment())
+            {
+                //启用错误页面
+                app.UseDeveloperExceptionPage();
+            }  else
+            {
+                app.UseExceptionHandler();
+            }
+            //运行程序的入口         
+            app.Run(async (context) =>
+            {
+               var ss= myWelcome.getWelcome();
+                await context.Response.WriteAsync(ss);
+            });
+        }
+    }

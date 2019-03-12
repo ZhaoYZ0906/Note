@@ -1,0 +1,56 @@
+code first
+1 写好表结构
+2 写一个nameDbContext类一定要继承于DbContext
+3在nameDbContext中写关于表的属性
+public DbSet<表名> Students { get; set; }
+4重写一个叫OnModelCreating的方法
+ protected override void OnModelCreating(ModelBuilder modelBuilder)
+注意参数
+
+5方法里面可以写
+建表：modelBuilder.Entity<Student>().ToTable("Student");
+表的设置等
+
+不自动生成主键
+modelBuilder.Entity<Course>().ToTable("Course").Property(a => a.CourseId).ValueGeneratedNever();
+
+配置一对多关系
+				1		多
+modelBuilder.Entity<Enrollment>().HasOne(a => a.Student).WithMany(a => a.Enrollments);
+
+6 startup文件中依赖注入读取配置文件
+services.AddDbContext<MySchoolDbContext>(d => d.UseSqlServer(Configuration.GetConnectionString("Default")));
+
+7 配置文件
+ "ConnectionStrings": {
+    "Default": "Data Source=.; Database=MySchool;User Id=sa;Password=123"
+
+  }
+
+8主函数中写入
+
+var host = BuildWebHost(args);
+
+            using (var scope = host.Services.CreateScope()) {
+
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var content = services.GetRequiredService<MySchoolDbContext>();
+                    DbInitializer.Initialize(content);
+                }
+                catch (Exception e)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(e,"初始化失败!");
+                }
+            }
+
+host.Run();
+
+不管是否firstcode以下两句必须有
+var host = BuildWebHost(args);
+host.Run();
+
+
+第一次使用记录，可能存在理解混乱

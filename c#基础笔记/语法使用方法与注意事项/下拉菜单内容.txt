@@ -1,0 +1,15 @@
+SelectList：用于存放下拉菜单内容的对象
+
+构造函数：
+public SelectList(IEnumerable items, string dataValueField, string dataTextField, object selectedValue);
+items：从数据库中查找出来的集合
+dataValueField：用于当作value值的属性/字段名
+dataTextField：用于当作文本的属性/字段名
+selectedValue:如果此项不为空则筛选出items集合中items.id=selectedValue.id的对象（筛选条件）
+
+item与selectedvalue为同样的类
+
+前台使用方法：
+<select  class="form-control" asp-items="ViewBag.DepartmentID">
+                   
+ </select>

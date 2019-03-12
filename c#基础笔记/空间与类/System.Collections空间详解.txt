@@ -1,0 +1,38 @@
+collections包括类与接口两部分：
+
+类部分：
+1  ArrayList-动态数组并且实现IList接口
+2 Hashtable-表示键/值对的集合，这些键/值对根据键的哈希代码进行组织。（哈希表）
+3 SortedList-表示键/值对的集合，这些键值对按键排序并可按照键和索引访问。（动态数组与哈希表的结合体）
+4 Queue-表示对象的先进先出集合。（队列）
+5 Stack-表示对象的简单的后进先出非泛型集合。（堆和栈）
+
+6 BitArray-管理位值的压缩数组，该值表示为布尔值，具体见BitArray详情
+
+7 CaseInsensitiveHashCodeProvider-使用忽略字符串大小写的哈希算法，为对象提供哈希代码。
+
+8 CaseInsensitiveComparer-比较两个对象是否相等，比较时忽略字符串的大小写。
+9 Comparer-比较两个对象是否相等，其中字符串比较是区分大小写的。
+（实例化有点特别：Comparer comparer = Comparer.Default;），并且一般其他类具有IComparer接口，所以一般用不到此类
+
+10 CollectionBase-为强类型集合提供 abstract 基类。（一般使用他的子类，子类由使用者自己定制并且调用）
+11 DictionaryBase-为键/值对的强类型集合提供 abstract 基类。（一般使用他的子类，子类由使用者自己定制并且调用）
+12 ReadOnlyCollectionBase-为强类型非泛型只读集合提供 abstract 基类。（一般使用他的子类，子类由使用者自己定制并且调用）
+
+
+接口部分：
+（使用时查询接口内容）
+ ICollection-定义所有非泛型集合的大小、枚举数和同步方法。
+ IDictionaryEnumerator-枚举非泛型字典的元素。
+ IEnumerable-公开枚举数，该枚举数支持在非泛型集合上进行简单迭代。
+ IEnumerator-支持对非泛型集合的简单迭代。
+ IList-表示可按照索引单独访问的对象的非泛型集合。
+
+ IComparer-公开一种比较两个对象的方法
+ IEqualityComparer-定义方法以支持对象的相等比较。
+
+ IDictionary-表示键/值对的非通用集合。
+ IHashCodeProvider-使用自定义哈希函数为对象提供哈希代码。
+
+
+

@@ -1,0 +1,48 @@
+反射作用：
+可以使用反射动态地创建类型的实例和获取类型的某些参数
+应用程序需要在运行时从某个特定的程序集中载入一个特定的类型，以便实现某个任务时可以用到反射。
+
+注意事项
+现实应用程序中很少有应用程序需要使用反射类型
+使用反射动态绑定需要牺牲性能
+有些元数据信息是不能通过反射获取的（目前还没有碰到，推测可能与权限有关）
+某些反射类型是专门为那些clr 开发编译器的开发使用的，所以你要意识到不是所有的反射类型都是适合每个人的。（你还用不了就是这样。。。）
+
+可以替代反射的手段：
+反射的使用主要是为了在某一的运行时刻，执行特定的类（a情况下：程序的的这一步要使用a类；b情况下：程序的这一步要使用b类）
+因为反射会损失性能，所以针对这种情况利用   类的多态与接口的实现   都可以完成，不同情况下同一步骤的不同类使用
+使用委托也可以完成，因为委托针对方法形式一致的方法，所以在这一刻只要方法形式一致都可以使用（a的a（）形式与b的b（）形式一致，所以可根据情况判断使用a（）还是b（））
+
+记得添加反射的引用
+笔记中装配件=程序集
+反射：
+反射入口，读取对应的dll文件
+Assembly assembly=Assembly.Load("程序集名称");
+
+读取要创建类的类型
+Type dbHelperType = assembly.GetType(程序集+类名);
+获取某个对象的类型（不使用反射）
+Type  t  =  Type.GetType(“System.String”)；有6个重载具体看定义
+获取某个类型的类型（不使用反射）
+typeof(x)中的x，必须是具体的类名、类型名称等，不可以是变量名称
+
+特别声明：
+要查找一个类，必须指定它所在的装配件，或者在已经获得的Assembly实例上面调用GetType。
+只有两种情况下不需要指定装配件
+1 类在本装配件中
+2 类在mscorlib.dll中（因为此装配件默认加载，除非在编译时指明不使用）
+
+
+创建对应的类
+object ObjDbHelper =（强制转换） Activator.CreateInstance(类的类型);
+
+
+读取对应类的方法名   new Type[]{}里面放对应的参数类型
+MethodInfo methodInfo34 = Type.GetMethod("方法名", new Type[] { typeof(string),typeof(int) });
+MethodInfo  method  =  type.GetMethod("GetValue");
+
+使用方法  object数组里面存放方法的对应参数
+methodInfo34.Invoke(类的实例, new object[] { "22",11});
+
+创建委托
+TestDelegate  method  =  (TestDelegate)Delegate.CreateDelegate(类型,具体对象,“方法名”);

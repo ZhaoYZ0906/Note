@@ -1,0 +1,8 @@
+1 从本地建立一个库 git init
+2 github上面创建一个库
+3 建立本地与github的链接$ git remote add origin https://github.com/netLearner7/core_3.10_b.git
+4 github库库中存在一个README.md的文件，这个文件在本地库中没有，但是没有上传文件会保存
+所以先从GitHub上拉取所有文件  git pull --rebase origin master
+5 添加要上传的文件到缓冲区  git add 文件名
+6 从缓冲区添加到本地仓库  $ git commit -m ‘备注’
+7 从本地推送到远程仓库 git push -u origin 分支名

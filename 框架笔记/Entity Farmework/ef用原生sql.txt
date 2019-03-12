@@ -1,0 +1,39 @@
+var groups = new List<EnrollmentDateGroup>();
+
+
+            var conn = _dbContext.Database.GetDbConnection();
+
+
+            try
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    string sqlQuery = @"select  EnrollmentDate,  COUNT(*) as StudentCount     from people where Discriminator='Student' group by EnrollmentDate";
+
+                    command.CommandText = sqlQuery;
+
+                    DbDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (reader.HasRows)
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var row = new EnrollmentDateGroup()
+                            {
+                                EnrollmentDate = reader.GetDateTime(0),
+                                StudentCount = reader.GetInt32(1)
+                            };
+                            groups.Add(row);
+
+                        }
+                    }
+                    reader.Dispose();
+                }
+
+            }
+            finally
+            {
+                conn.Close();
+            }

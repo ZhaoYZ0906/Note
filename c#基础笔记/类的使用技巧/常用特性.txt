@@ -1,0 +1,119 @@
+BindAttribute：
+
+假设我们已经有下面一个Employee实体类：
+public class Employee
+{
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Address { get; set; }
+    public string PhoneNo { get; set; }
+}
+
+现在如果我们只想提交Email，Name和PhoneNo，而我们不想提交地址，这时我们可以在实体类上添加如下特性：
+[Bind(Exclude="Address")]
+   public class Employee
+   {
+       public string Name { get; set; }
+       public string Email { get; set; }
+       public string Address { get; set; }
+       public string PhoneNo { get; set; }
+   }
+
+此特性也可以用在方法的参数列表中：
+public IActionResult Create([Bind(Exclude="RealName,EnrollmentDate")] Student student)
+[Bind(Exclude="RealName,EnrollmentDate")] 模型不绑定RealName,EnrollmentDate属性
+也可以
+public IActionResult Create([Bind("RealName,EnrollmentDate")] Student student)
+模型只绑定RealName,EnrollmentDate属性
+
+注：BindAttribute要在System.Web.Mvc命名空间下使用，使用BindAttribute，我们可以在提交表单时对字段进行一些控制。
+
+
+
+
+
+Remote Attribute：
+
+实体类:
+public class Employee
+{
+    public string Name { get; set; }
+    [Remote("CheckEmail","Employee",ErrorMessage="Email is already exist")]
+    public string Email { get; set; }
+    public string Address { get; set; }
+    public string PhoneNo { get; set; }
+}
+
+[Remote("CheckEmail","Employee",ErrorMessage="Email is already exist")]
+
+当我们输入完邮箱后，CheckEmail方法将被执行并检查输入值是否存在是否存在。
+RemoteAttribute的第一个参数是一个Action名字，第二个是Controller名字，第三个是如果输入值已存在后显示给用户看的提示信息。
+
+方法写法：
+public JsonResult CheckEmail(string Email)
+  {
+      //Check here in database if it exist in database return true else false.
+      return Json(false, JsonRequestBehavior.AllowGet);
+  }
+
+
+
+
+
+HiddenInput Attribute：
+
+实体类：
+public class Employee
+    {
+        [HiddenInput(DisplayValue=false)]
+        public string Name { get; set; }
+        [Remote("CheckEmail","Employee",ErrorMessage="Email is already exist")]
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public string PhoneNo { get; set; }
+    }
+
+[HiddenInput(DisplayValue=false)]
+在以上的实体中，我用HiddenInput特性去描述Name字段。这样程序运行后在浏览器中Name字段将不在显示。
+因此HiddenInput给我们d 在实体字段上多了一些额外的控制。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+注册服务在Startup.cs类的public void ConfigureServices(IServiceCollection services)方法中
+
+注册使用：
+services.AddScoped<IMyWelcome（接口类型）,myWelcome（实例化对象）>();
+ //注册服务AddTransient每访问一个事件生成一个myWelcome,
+AddSingleton单例生成一个myWelcome,
+AddScoped每次请求生成一个myWelcome
+
+
+成为服务之后其他类想要使用的时候可以在构造函数中请求，管道自动将 服务 传递进行实例化对象
+（好像是革命的砖，哪里需要哪里搬。。。。）
+
+private readonly IMyserver<student> myserver;
+
+        public HomeController(IMyserver<student> myserver)
+        {
+            this.myserver = myserver;
+        }

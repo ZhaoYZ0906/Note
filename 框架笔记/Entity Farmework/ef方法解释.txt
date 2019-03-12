@@ -1,0 +1,29 @@
+ef方法：
+
+//重要！！！！
+AsNoTracking()：
+表示此次ef请求操作只负责查询后序不会进行增删改的操作，使ef断开增删改链接，从而提交效率（据说为提高3倍效率所以纯查询必须加）
+//添加之后的此次操作不能进行增删改
+
+每一对db的调用为一次操作
+var student = await _context.Students.Include(a=>a.Enrollments).ThenInclude(e=>e.Course).AsNoTracking()
+.SingleOrDefaultAsync(m => m.Id == id);
+
+
+FirstOrDefaultAsync：
+异步返回第一个条件符合的对象（元组）
+//此方法允许于两个及以上的条件符合对象，但只返回第一个
+开发过程中一般使用这个，如果通过姓名查询可能存在同名同姓的用户，则返回第一个用户并且不会抛出异常
+
+SingleOrDefaultAsync：
+异步返回一个条件符合的对象（元组）
+//此方法只允许有一个条件符合对象，如果有两个则抛出异常
+
+
+Include（）：
+存在a对象，a.Include（a=》a.b）则将保存在a中的b通过ef也查询出来，后序操作为对a的操作
+
+ThenInclude（）：
+存在a对象，a.Include（a=》a.b）则将保存在a中的b通过ef也查询出来，并且进入b中，后序操作为对b的操作
+
+ThenInclude之后使用Include则返回到a中

@@ -1,0 +1,8 @@
+hashtable的每一个键值对为一个DictionaryEntry类
+foreach抽调的每一组数据就是一个dictionaryentry
+
+哈希表的key值为索引值 value值为内容值
+所以一定唯一的值放入key当作索引 具体理解看 leetcode两数之和
+根据某a找到和a所关联的b  此时a为索引 b为内容
+
+hashtable.ContainsKey(key值)为判断有没有这个key=key值的键值对

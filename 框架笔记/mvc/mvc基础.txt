@@ -1,0 +1,373 @@
+一.不跳转页面的情况下传递参数使用ajax
+二.跳转页面的情况下访问控制器
+三.控制器给view传递参数
+四.控制器返回类型 ActionResult类
+五.数据库增删改查
+六.引用打包
+
+
+
+一，ajax使用
+1方法适用于传递参数较少时
+2方法适用于传递参数较多时
+
+  1.ajax变量传递参数，并且返回一个Json对象
+
+    view部分:
+       $.ajax({
+                url: "/Index/ajax_try",
+                type: "POST",
+                dataType: "Json",//注明返回值为Json
+                data: { i: "22" },
+                success: function a(result) {
+                    //相关操作
+                    alert(result.Json1.user);
+                }
+            })
+
+    控制器部分：
+        [HttpPost]
+        public JsonResult ajax_try(string i)
+        {
+            Class1 Json1 = new Class1();
+            Json1.userID = i;
+            Json1.user = "zyz";
+            Json1.password = "123456";
+
+            Class1 Json2 = new Class1() { user = "wbb", userID = "33", password = "123456" };
+            
+            return Json(new { IsSuccess = "1", Json1,Json2 });
+            //Json中可以同时序列化多个对象或自定义赋值
+        }
+
+
+  2.ajax字符串传递参数，并且返回一个Json对象
+
+    view部分:
+            var data1 ="userID=22&password=123234&user=zl"
+            $.ajax({
+                url: "/Index/ajax_try2",
+                type: "POST",
+                dataType: "Json",
+                data: data1,
+                success: function dd() {
+                    alert(222222);
+                }
+            })
+
+    控制器部分：
+        [HttpPost]
+        public JsonResult ajax_try2()
+        {
+            Class1 Json3 = new Class1();
+            this.TryUpdateModel(Json3);
+            //自动将传递过来的数据（ajax中的data1）更新到Json3对象，
+               如果更新成功返回一个true，不成功返回false
+            return Json(new { Json3});
+        }
+
+
+二，form表单访问控制器
+1方法适用于参数较少
+2方法适用于参数较多
+3方法适用于不想写方法的参数列表
+
+  1.form表单变量传递参数，返回一个view
+
+    view部分：
+        <form action="/Index/form_try2" method="post">
+        //写清楚控制器和方法的名字
+            <input type="text" id="user" name="user" value="" />
+            <input type="text" id="password" name="password" value="" />
+            //name的值要和方法中参数名称一致，才可以传递过去
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+
+    控制器部分：
+        [HttpPost]
+        public ActionResult form_try2(string user,string password)
+        //参数名称要和form表单中的控件的name值一致
+           参数名称中没有对应的name值则这个数据抛弃
+           name值没有对应的参数名称则这个参数为空
+        {            
+            return Content(user+password);
+        }
+
+  2.form表单中的内容作为一个变量传递参数，返回一个view
+
+    view部分：
+       <form action="/Index/form_try2" method="post">
+            <input type="text" name="user" value="" />
+            <input type="text" name="password" value="" />
+            //name的值要和方法中参数名称一致，才可以传递过去
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+
+    控制器部分：
+        [HttpPost]
+        public ActionResult form_try2(Class1 class1)
+        //参数名称要和form表单中的控件的name值一致
+           参数名称中没有对应的name值则这个数据抛弃
+           name值没有对应的参数名称则这个参数为空
+        {
+            return Content(sss.userID);
+        }
+
+  3.form表单中的内容在控制器中通过this.TryUpdateModel(类名)更新到类
+    
+    view部分：
+       <form action="/Index/form_try3" method="post">
+            <input type="text" name="user" value="" />
+            <input type="text" name="password" value="" />
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+
+    控制器部分：
+        [HttpPost]
+        public ActionResult form_try3()
+        {
+            Class1 class1 = new Class1();
+            this.TryUpdateModel(class1);
+            //form表单中的控件的name值要和类的属性名一致
+            类名中没有对应的name值则这个数据抛弃
+            name值没有对应的属性值则这个属性值为空
+            return Content(class1.user);
+        }
+
+三，控制器给view传递参数
+1 2 3 方法只能传递一个参数，数据类型不限 
+注2和3方法有区别不过不影响使用
+4方法传递一个类，适用于多个参数时
+
+  1.ViewBag
+
+    view部分：
+      @ViewBag.name
+
+    控制器部分：
+        public ActionResult Index2()
+        {
+            ViewBag.name = "abc";           
+            return View();
+        }
+
+  2.ViewData
+
+    view部分：
+       @ViewData["name2"]
+
+    控制器部分：
+        public ActionResult Index2()
+        {          
+            ViewData["name2"] = "efg";            
+            return View();
+        }
+
+  3.TempData
+
+    view部分：
+      @TempData["name3"]
+
+    控制器部分：
+        public ActionResult Index2()
+        {          
+            TempData["name3"] = "hij";
+            return View();
+        }
+
+  4.类传递
+
+    view部分：
+       @Model.user
+       //Model默认为控制器中 View括号内传递过来的类
+
+    控制器部分：
+
+        public ActionResult Index2()
+        {           
+            Class1 class1 = new Class1()
+            {
+                user = "xxx",
+                userID = "444",
+                password="abc"
+            };
+            return View(class1);
+            //传递的类放在括号里面
+        }
+
+四，控制器返回类型 ActionResult类
+负责控制的重定向和返回视图/数据
+1.viewresult：返回一个视图
+2.PartialViewResult：返回一个分部视图，配合ajax使用完成部分页面的刷新
+3.RedirectResult和RedirectToRouteResult：负责控制器方法的重定向
+4.ContentResult：返回一个字符串
+5.JsonResult：返回一个json对象，一般和ajax配合使用 
+
+  1.viewresult
+      返回一个视图（最常用）不做实例
+
+  2.PartialViewResult
+      返回一个分部视图，配合ajax使用完成部分页面的刷新
+
+      View部分：
+        <div>
+              这里是主视图
+             <input type="button" id="ss" name="name" value="读取分部视图" />
+         </div>
+         <div id="add"></div>
+         <script>
+            $("#ss").click(function myfunction() {
+                 $.ajax({
+                     url: "/Index/Index4",
+                     type: "POST",
+                     dataType: "html",
+                     success: function add(data) {
+                         $("#add").html(data);
+                      }
+                 })
+              })
+          </script>
+
+      控制器部分
+        public ActionResult Index3()
+        {
+            return View();
+        }
+        public ActionResult Index4()
+        {
+            return PartialView("View");
+        }
+
+  3.RedirectResult和RedirectToRouteResult
+     //负责控制器方法的重定向
+     //a控制器中的a方法返回a控制器中的b方法的视图）
+     //然后返回一个视图
+     
+       return Redirect("/控制器名称/方法名称");
+       return RedirectToAction("方法名称", "控制器名称");
+
+  4.ContentResult
+     返回一个字符串
+
+      return Content（“123”）；
+ 
+  5.JsonResult
+     返回一个json对象，一般和ajax配合使用 
+
+    view部分:
+      <div>
+        <input type="text" id="user" name="name" value="" />
+        <input type="text" id="password" name="name" value="" />
+        <input type="button" id="ss" name="name" value="提交" />
+        <input type="button" id="ss2" name="name" value="提交2" />
+       </div>
+       <script>
+         $.ajax({
+                  url: "/Index/ajax_try",
+                  type: "POST",
+                  dataType: "Json",//注明返回值为Json
+                  success: function a(result) {
+                      //相关操作
+                      alert(result.Json1.user);
+                  }
+              })
+       </script>
+
+    控制器部分：
+        [HttpPost]
+        public JsonResult ajax_try()
+        {
+             Class1 Json2 = new Class1() 
+	{ user = "wbb", 
+	  userID = "33", 
+	  password = "123456" 
+                };
+            return Json(new {  Json1 });
+            //Json中可以同时序列化多个对象或自定义赋值
+        }
+
+
+五，使用ef的增删改查
+使用表对象作为操作单位
+1.增
+2.删
+3.改
+4.查
+
+    1.增
+        ef_PracticeEntities db = new ef_PracticeEntities();
+        public ActionResult Index6()
+        {
+            user user = new user() {
+                user1 = "abc",
+                password = "123"
+                
+            };
+            //初始化对象
+            db.users.Add(user);
+            //添加对象
+            db.SaveChanges();
+            //保存对象
+
+            return View();
+        }
+
+    2.删
+        ef_PracticeEntities db = new ef_PracticeEntities();
+        user user = new user()
+            {
+                user1 = "zyz",
+                password = "123"
+                //只要主键一致就可以
+            };
+            //第一种方法
+            db.Entry(user).State = System.Data.Entity.EntityState.Deleted;
+            //第二种方法
+            db.users.Attach(user);
+            db.users.Remove(user);
+            //1和2都必须写这句
+            db.SaveChanges();
+
+    3.改
+        
+         ef_PracticeEntities db = new ef_PracticeEntities();
+         user user2 = db.users.Find("zyz");
+         //查询出一个对象
+         user2.password=”321“；
+         //主键不可以改
+         db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+         db.SaveChanges();
+
+    4.查
+
+        ef_PracticeEntities db = new ef_PracticeEntities();
+        //查询一个  只能根据主键查询 Find里面填写主键
+        user user2 = db.users.Find("zyz");
+        //查询多个返回一个list类型
+        List<user> user = db.users.Where(ss=>ss.user1!="").
+        OrderBy(ss=>ss.user1).Skip(1).ToList<user>();
+        //其中.OrderBy(ss=>ss.user1)为针对user1进行排序
+                 .Skip(1)跳过排序完成后的第一条
+	 注必须先排序再跳过
+
+六，引用打包
+
+    1.打包js
+      bundles.Add(new ScriptBundle("自己写一个名字")
+      .Include("~/Scripts/jquery-{version}.js"));
+     {version}：表示匹配版本号
+      validate*：表示匹配以前面的为开头
+   2.打包style
+     bundles.Add(new StyleBundle("~/Content/css")
+     .Include( "~/Content/bootstrap.css",
+                      "~/Content/site.css"));
+
+    注：在web.config文件中存在
+    <system.web>
+       <compilation debug="true" targetFramework="4.6.1" />
+       <httpRuntime targetFramework="4.6.1" />
+    </system.web>
+    当 debug="true" 时表示此程序处于调试状态，在浏览器上运行不会对js和css进行
+    压缩，但当 debug="false"时，在浏览器上运行会对js和css进行压缩，压缩完成后
+    类似于 jquery.min.js 
+    一旦压缩不会返回原样，所以彻底结束以前不要压缩。

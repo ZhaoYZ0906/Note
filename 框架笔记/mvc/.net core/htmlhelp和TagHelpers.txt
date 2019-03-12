@@ -1,0 +1,48 @@
+TagHelpers是.net core新增的类，效果与htmlhelp类一致但是比htmlhelp简练
+在view文件夹下存在一个_ViewImports.cshtml文件里面的@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+是对tag的引用
+
+使用方法：基本格式：asp-
+//方法名
+asp-action=""
+//控制器名
+asp-controller=""
+
+xxx为当前view绑定的model.xxx。
+通过路由传值/get方式/地址栏会显示
+当发生超链接/按钮单击等 的时候，
+asp-route-xxx的值“aaa”传递到 对应方法参数列表 中  名叫xxx的变量
+asp-route-xxx="aaa"
+所以model属性名，asp-route-属性名和方法参数列表中的变量名要一致
+
+
+通过post方式传值
+一般是用在post请求和递交表单的时候，
+asp-for=“xxx”中的“xxx”的值传递到 对应方法参数列表 中  名叫xxx的变量
+在html中一般生成一个叫xxx的组件，比如 input name=“xxx” type=“text”
+asp-for=“xxx”
+所以model属性名，asp-route-属性名和方法参数列表中的变量名要一致
+
+
+显示错误信息
+
+比如model类中有特性【maxlength=5】，用户点击提交之后传入控制器/方法中将数据绑定到参数列表中的student
+绑定时进行数据验证，如果 提交的数据大于5则在modelstate（Controller类自带属性）中添加一条错误信息
+后台可以通过 if（ModelState.IsValid）判断有没有错，当return view（） 时 ModelState，
+会传递视图，可以通过以下两个方法显示错误信息
+
+asp-validation-for="属性名"
+属性级别的错误信息，一般为特性验证
+
+asp-validation-summary="ModelOnly（特定字符串s）"
+模型级别错误，可能为传递类型不对等
+
+下拉列表用法
+<select asp-for="属性名" class="form-control" asp-items="SelectList对象">
+
+selectlist创建方式：
+new SelectList(一个对象集合, "value值（属性名）", "text值（属性名）", 默认选项（obj）);
+
+
+
+

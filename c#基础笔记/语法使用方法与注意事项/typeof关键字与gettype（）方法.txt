@@ -1,0 +1,14 @@
+总得来说他们都是为了获取某个实例具体引用的数据类型System.Type。
+
+1、GetType()方法继承自Object，所以C#中任何对象都具有GetType()方法，x.GetType()，其中x为变量名
+
+2、typeof(x)中的x，必须是具体的类名、类型名称等，不可以是变量名称
+
+3、System.Type.GetType()，有两个重载方法
+
+比如有这样一个变量i: 
+Int32 i = new Int32(); 
+
+使用GetType()，i.GetType()返回值是Int32的类型，但是无法使用typeof(i)，因为i是一个变量，
+
+使用typeof()，则只能：typeof(Int32)，返回的同样是Int32的类型。

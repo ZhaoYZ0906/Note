@@ -1,0 +1,16 @@
+ModelState会自动带到视图上去
+使用方法：
+ModelState.AddModelError("key值", "value值");
+
+<span asp-validation-for="key值" class="text-danger"></span>
+
+当控制器中添加了一个错误信息，返回视图时asp-validation-for会根据ModelState中有无对应的key，有则显示信息，无则不显示
+
+也有一下几种用法
+
+@model LoginModel  指定页面绑定的模型为LoginModel。
+asp-controller 指定form标签提交时对应的控制器名称。
+asp-action 指定form标签提交时对应的Action名称。
+asp-for 指定HTML元素绑定的模型对应的属性名称。
+asp-validation-for 绑定对应模型属性名称，模型验证失败时，显示模型定义的ErrorMessage。
+asp-validation-summary="All" 显示所有验证失败的错误信息。

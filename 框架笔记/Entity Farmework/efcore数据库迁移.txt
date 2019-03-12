@@ -1,0 +1,19 @@
+cli方式
+1 右键项目名单击编辑xxx.csproj
+2 添加编译包
+<DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.Dotnet" Version="2.0.4" />
+3 修改迁移后的链接字符串
+4 在当前文件夹下打开命令行（cmd）
+5输入dotnet ef migrations add 名字
+6 执行完成后解决方案中出现一个叫migrations的文件夹，
+第一个类以日期开头，是数据库脚本
+第二个类是第一个类中所使用的数据结构
+7 命令行输入dotnet ef  database update
+
+
+Nuget方式
+1 打开nuget
+2 输入Add-Migration
+3 完成出现一个叫migrations的文件夹，
+4 输入update-database
+5 修改字符串

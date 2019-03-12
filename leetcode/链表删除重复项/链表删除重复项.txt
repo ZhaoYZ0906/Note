@@ -1,0 +1,15 @@
+1->2->2->3->4->4->4
+
+链表循环
+当前元素的值等于下一个值时，当前元素不移动，但next属实的值由下一位置成下一位的下一位
+当前元素的值不等于下一个值时，当前元素向后移动一位
+
+while (list.next != null) {
+                if (list.val == list.next.val)
+                {
+                    list.next = list.next.next;
+                }
+                else {
+                    list = list.next;
+                }
+            }

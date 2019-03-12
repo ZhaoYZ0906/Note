@@ -1,0 +1,10 @@
+git config --list ----查看已有参数
+git init--创建库
+mkdir 文件夹名--创建文件夹
+touch a1.test--创建文件
+git status--查看当前文件夹的状态
+git add a1.cs--将文件从工作区放入准备区
+git add .--将所有文件从工作区放入准备区
+git commit -m ‘备注’--将文件从准备区存放库中
+git clone github地址--下载一个库
+git push---提交到github

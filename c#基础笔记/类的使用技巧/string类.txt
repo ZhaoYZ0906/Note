@@ -1,0 +1,4 @@
+str.indexof(string str2)
+此方法判断字符串str2在字符串str中的位置返回索引值，不存在则返回-1，str2为“”返回0
+
+string可以使用索引，例如str【0】

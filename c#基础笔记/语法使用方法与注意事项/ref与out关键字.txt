@@ -1,0 +1,60 @@
+方法一般只返回 一个值，为解决返回多个值问题推出了ref与out
+基本用法：
+函数声明:
+public void used（out/ref int a,out/ref string b）
+函数调用：
+used（out/ref a,out/ref b）;
+
+效果：
+    主函数中，在used调用之后的a与b都是被used处理过的值
+区别：
+1 调用方法
+    out的参数不用在调用方法之前赋值，即使赋值在方法中也显示为空
+    ref的参数 必须在调用方法之前赋值，复制后在方法中直接使用   
+
+2 方法中
+     out参数在方法中为空
+     ref参数在方法中为传递过来的参数
+
+主函数部分：
+//outSum没必要赋值，赋值了也完全没用。
+ 4         //如果AddByOut函数内部直接使用out对应的参数，会报错：使用了未被赋值的 out 参数a
+ 5         int outSum = 1;
+ 6         int ov1 = 2;
+ 7         int ov2 = 3;
+ 8         AddByOut(out outSum, ov1, ov2);
+
+12         //refSum 必须赋值
+13         int refSum = 1;
+14         int rv1 = 2;
+15         int rv2 = 3;
+16         //如果refSum没有赋值，这里会报错：使用了未赋值的局部变量 refSum
+17         AddByRef(ref refSum, rv1, rv2);
+
+方法部分：
+21     public void AddByOut(out int a, int b, int c)
+22     {
+23         //a = a + b + c;// a 未被赋值，不能直接使用，即使是调用的地方 out对应的参数初始化也没用
+24         a = b + c;
+25     }
+26 
+27     public void AddByRef(ref int a, int b, int c)
+28     {
+29         a = a + b + c; // 可以直接使用a 
+30     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

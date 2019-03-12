@@ -1,0 +1,38 @@
+三个指针 left right middle，需求x
+left=0，right=maxvalue
+middle = (left + right) / 2;
+
+需要注意的是循环里面的判断语句需要if嵌套来判断三种情况
+1 x>middle
+2 x<middle
+3 x=middle
+一个if完成不了
+
+二分法查找到最后时比如
+left=1，right=2 ，x=15，array【left】=10，array【right】=20
+如果将x插入数组中（数组顺序排列）则x位于1与2的中间，此时middle=1，
+判断10《15所以将left=middle+1=2，下一轮判断时2<=2所以继续循环
+此时middle=2
+判断15《20则right=middle-1=1，此时left《=right不成立所以不循环
+此时返回right
+
+二分法思想为循环判断需求x与中间值middle的大小，从而得到结果
+当想返回x左边的值时，则最后返回 right
+当想反悔x右边的值时，则最后返回left
+注意如果在判断过程中出现x=middle情况，则表示找到了想要的值，则直接返回middle
+
+
+例子：当  x=1.5时 如果结果想要x的左边整数
+比如求8的平方根，8的平方根为2.82，如果要求取整则返回right
+
+比如一个顺序数组为{1234578}插入一个6
+6需要插入到7的位置，7和8后移一位，此时5《6《7，所以返回7的位置，返回left
+
+二分法最后时把x放入循环的数值当中，取左边则返回right，右边则返回left
+
+
+
+
+
+
+

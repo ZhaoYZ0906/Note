@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+</head>
+<body>
+    ajax部分
+    <div>
+        <input type="text" id="user" name="name" value="" />
+        <input type="text" id="password" name="name" value="" />
+        <input type="button" id="ss" name="name" value="提交" />
+        <input type="button" id="ss2" name="name" value="提交2" />
+    </div>
+    <hr />
+    form表单部分
+    <div>
+        <form action="/Index/form_try1" method="post">
+            <input type="text" name="user" value="" />
+            <input type="text" name="password" value="" />
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+    </div>
+    <hr />
+    <div>
+        <form action="/Index/form_try2" method="post">
+            <input type="text" name="user" value="" />
+            <input type="text" name="password" value="" />
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+    </div>
+    <hr />
+    <div>
+        <form action="/Index/form_try3" method="post">
+            <input type="text" name="user" value="" />
+            <input type="text" name="password" value="" />
+            <input type="submit" id="ss" name="name" value="提交" />
+        </form>
+    </div>
+    <script>
+        $('#ss').click(function myfunction() {
+
+            $.ajax({
+                url: "/Index/ajax_try",
+                type: "POST",
+                dataType: "Json",//注明返回值为Json
+                data: { i: "22" },
+                success: function a(result) {
+                    console.log(result)
+                }
+
+            })
+        })
+
+        $("#ss2").click(function myfunction2() {
+            var data1 = "userID=22&password=123234&user=zl"
+            $.ajax({
+                url: "/Index/ajax_try2",
+                type: "POST",
+                dataType: "Json",
+                data: data1,
+                success: function dd(result) {
+                    alert(result.Json3.userID);
+                }
+            })
+        })
+    </script>
+</body>
+</html>

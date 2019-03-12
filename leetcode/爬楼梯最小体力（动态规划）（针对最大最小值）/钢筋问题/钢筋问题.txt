@@ -1,0 +1,33 @@
+public static int buttom_up_cut(int []p)
+   
+ {
+        
+	int []r=new int[p.length+1];
+      
+ 	   for(int i=1;i<=p.length;i++)
+       
+ 	   {
+         
+ 	     int q=-1;
+            
+	     //①
+           
+	     for(int j=1;j<=i;j++)
+           
+ 	          q=Math.max(q, p[j-1]+r[i-j]);
+    
+ 	     r[i]=q;
+       
+ 	   }
+       
+ 	return r[p.length];
+    
+}
+
+i=钢筋长度
+j=第一段钢筋的长度
+i-j=总长度减去第一段长度
+r【i-j】为i-j长度的最优解
+
+r1=1
+r2=5
