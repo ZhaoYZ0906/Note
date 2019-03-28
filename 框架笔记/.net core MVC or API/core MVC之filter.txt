@@ -1,0 +1,85 @@
+filter：过滤器，在指定位置添加相应的逻辑
+
+位置：Microsoft.AspNetCore.Mvc.Filters
+注意：filters存在于MVC管道之中而不是dotnet core 管道之中！
+filters一般以特性的形式出现，所以除了实现filter接口，还要继承于Attribute
+
+filter一共一个基类五个子类
+
+基类：IFilterMetadata
+
+子类（分别有对应的异步模式）：
+
+1 授权过滤器：lAuthorizationFilter  lAsyncAuthorizationFilte
+2 资源过滤器：IResourceFilter
+3 Action过滤器：lActionFilter
+4 异常过滤器：lExceptionFilter
+5 Result过滤器：IResultFilter
+
+因为filters存在于MVC管道中，所以有MVC自动触发
+5种过滤器的触发过程：5（测试的时候没有手动抛出异常所以不确定）-1-2-3-3-5-5-2
+注意:触发过程中存在两个重复数字的filters则证明存在 触发前和触发后 
+
+使用方法：
+Action级别和Controller级别：
+filter一般以特性的形式出现，所以直接使用特性即可
+
+全局级别：
+1 option.Filters.Add(new ResourceFilter());
+2 option.Filters.Add(typeof(ResourceFilter));
+3 option.Filters.Add<ResourceFilter>();
+
+3种方法都可以，推荐使用第三种。但是第2 3种，当构造函数中需要一个参数时，系统找不到需要的参数导致报错。
+解决方案：可能是。。。注册服务中注册一个参数？（猜测）
+
+
+filters的触发前与触发后：
+
+其中2 3 5，存在触发前/后，1 4只有一种触发（应该是触发前）
+
+同步的2 3 5中实现接口后会出现两个方法 
+
+public void OnResourceExecuted(ResourceExecutedContext context)//出发后执行
+public void OnResourceExecuting(ResourceExecutingContext context)//触发前执行
+
+异步的2 3 5中实现接口后会出现一个方法 
+
+public async Task OnResourceExecutionAsync(
+	ResourceExecutingContext context, 
+	ResourceExecutionDelegate next//这是一个委托
+	)
+        {            
+            //这里写执行前的操作
+
+            var xxx =await next();
+
+            //这里写执行后的操作
+        }
+
+
+1 4不管是同步还是异步都只有一个方法（同步对应同步方法，异步对应异步方法）实现即可
+
+//同步
+public async（自己加上） Task OnAuthorizationAsync(AuthorizationFilterContext context)
+//异步
+public void OnAuthorization(AuthorizationFilterContext context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

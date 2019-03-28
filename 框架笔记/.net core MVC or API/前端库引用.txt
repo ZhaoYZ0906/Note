@@ -1,0 +1,70 @@
+前端库引用在vs中可以使用npm（npm没装也能用。。。）
+1 添加一个npm配置文件（默认名称即可，json格式），找不到直接在搜索框搜npm
+2 在文件中添加一个“"dependencies": { "jquery": "3.3.1",}”对象，写完后保存npm自动下载对应框架
+3 修改中间件，添加：
+            app.UseStaticFiles(new StaticFileOptions
+            {
+	//指明在哪个文件夹下
+                RequestPath = "/文件夹名",
+	//知名文件夹路径   env可以读取到
+                FileProvider=new PhysicalFileProvider(Path.Combine(env.ContentRootPath,"文件夹名"))
+            });
+注：这个文件夹在资源管理器中看不到因为被默认排除在方案外，只要在资源管理器中点 显示所有文件即可
+
+4 在视图中正常引用即可
+
+tag与框架引用：
+
+    <environment include="Development"（Development环境下使用以下引用） 或者 exclude="Development"（除了这个环境之外使用以下引用）>
+        <link href="~/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+        <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+    </environment>
+
+在使用cdn时，可能会出现因网络不好导致的cdn连接不到，可以使用以下方法
+
+    <environment exclude="Development">
+
+        <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap-grid.css" （引用cdn）
+              asp-fallback-href="~/node_modules/bootstrap/dist/css/bootstrap.css" （如果cdn无法使用则使用这个）
+               asp-fallback-test-class="button"  （判断这个类是否存在，存在则可以使用，不存在则cdn不能使用）
+              rel="stylesheet" />
+
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/core.js" （引用cdn）
+                asp-fallback-src="~/node_modules/jquery/dist/jquery.min.js" （如果cdn无法使用则使用这个）
+                asp-fallback-test="Window.JQuery" （判断这个对象是否存在，存在则可以使用，不存在则cdn不能使用）
+                ></script> 
+
+    </environment>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

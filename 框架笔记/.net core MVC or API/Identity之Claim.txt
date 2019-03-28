@@ -1,0 +1,139 @@
+Claim（策略）
+
+数据结构：两个属性 Claim.type和Claim.value
+
+用途：针对于不同模块和不同用户的权限管理
+
+注意：策略是针对不同模块和不同用户的所以经常与Role（角色）关联使用完成比只用角色更复杂的用户/模块管理
+
+使用方法：
+
+Controllers方面：[Authorize(Policy = "策略名称")]
+
+
+注册服务：
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("策略名称", p => p.RequireRole("角色名"));//针对角色
+		//option.AddPolicy 提供5中内置的策略，分别是针对角色/用户名/claim/。。。
+             
+            });
+除内置的5中方法外，还提供2中扩展方法：
+
+第一种：
+
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("音乐编辑1", p => p.RequireAssertion(
+                     context =>
+                     {
+			//具体逻辑
+                         if (context.User.HasClaim(x => x.Type == "edit")) {
+                             return true;
+                         }
+                         return false;
+                     }
+                 ));
+	     }
+
+第二种：
+
+            services.AddAuthorization(option =>
+            {
+		option.AddPolicy("音乐编辑2", p => p.AddRequirements(new qqMailRequirement()));
+	    }
+	    services.AddSingleton<IAuthorizationHandler, EmailHandler>();
+
+
+这种方法需要手写两个类，这两个类分别继承于IAuthorizationRequirement和AuthorizationHandler<第一个类的类名>
+
+第一个类：
+//因为claim有type和value，一下是判断type+value的方法，如果只需要判断type，则这个类可以为空但是必须有
+public class qqMailRequirement:IAuthorizationRequirement
+    {
+        public string requireEmail { get; set; }
+
+        public qqMailRequirement(string email)
+        {
+            requireEmail = email;
+        }
+    }
+
+第二个类：
+    public class EmailHandler:AuthorizationHandler<qqMailRequirement>
+    {
+
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, qqMailRequirement requirement)
+        {
+            var cliam = context.User.Claims.FirstOrDefault(x=>x.Type=="ss");
+
+            if (cliam!=null)
+            {
+                if (cliam.Value.EndsWith(requirement.requireEmail))
+                {
+                    context.Succeed(requirement);
+                }
+
+            }
+            return Task.CompletedTask;
+
+        }
+
+    }
+
+总结：这两种扩展方法在本质上是一样的，都是利用
+AuthorizationHandlerContext+IAuthorizationRequirement两个类组合完成验证
+Handler主要负责逻辑验证
+requirement主要负责存储数据
+
+推荐使用第二种，因为第一种可能在starup中写大量的逻辑代码不太合适
+
+
+以上主要为策略的制定和注册服务
+
+用户添加/移除某个策略
+
+claim既然拥有type和value两个属性则可以自定义一个类使用list分别存放某个用户的所有type和所有value
+如果求简单则可以只list《string》主要是为了前台遍历的时候方便使用
+
+
+	    //根据前台传递回的消息查询出具体对象
+	    var user = await userManager.FindByIdAsync(mangeClimsViewModel.UserId);
+
+	    //实例化一个claim并将前台传回的数据赋值
+            var claim = new IdentityUserClaim<string>
+            {
+                UserId=mangeClimsViewModel.UserId,
+                ClaimType = mangeClimsViewModel.ClaimType,
+                ClaimValue = mangeClimsViewModel.ClaimValue /mangeClimsViewModel.ClaimType
+		两个变量的值可以一样但是不能为空
+            };
+
+	    //将claim添加/移除到指定的user
+            user.Claims.Add/Remove(claim);
+
+	    //更新到数据库
+            var result = await userManager.UpdateAsync(user);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

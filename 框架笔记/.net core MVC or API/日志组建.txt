@@ -1,0 +1,91 @@
+日志：在代码的合适位置写添加日志的语句可以在用户访问的时候生成一条日志
+日志的一般输出到控制台或者日志文件
+
+日志级别：trace<debug<info<warn<Error<Fatal;
+trace 正常记录
+debug 级别最低，可以随意的使用于任何觉得有利于在调试时更详细的了解系统运行状态的东东；
+info  重要，输出信息：用来反馈系统的当前状态给最终用户的；
+后三个，警告、错误、严重错误，这三者应该都在系统运行时检测到了一个不正常的状态。
+warn, 可修复，系统可继续运行下去；
+Error, 可修复性，但无法确定系统会正常的工作下去;
+Fatal, 相当严重，可以肯定这种错误已经无法修复，并且如果系统继续运行下去的话后果严重。
+
+
+.net core中拥有内置的日志组件，所以
+
+1 直接在想使用的地方依赖注入
+
+        private readonly ILogger<HomeController> logger;
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            this.logger = logger;
+        }
+
+2 使用
+
+ logger.LogInformation(id（自己想办法生成）, "备注信息{0}",i（备注信息中的参数）);
+
+
+
+但是一般使用第三方的插件，core推荐serilog
+
+1 还原serilog的包，解决方案-右键-管理解决方案的nuget包
+
+2 搜索serilog（日志组件）/serilog sinks file（输出到文件的媒介）/serilog sinks console（输出打控制台的媒介）并安装
+
+3 main函数中添加log
+
+                Log.Logger = new LoggerConfiguration()
+
+                //默认最小记录级别
+
+                .MinimumLevel.Debug()
+                //如果遇到Microsoft命名空间，那么最小记录级别为Information
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+
+                //通过上下文记录其他信息（具体什么不知道。。）
+
+                .Enrich.FromLogContext()
+
+                //写到控制台
+
+                .WriteTo.Console()
+
+                //写到文件，生成文件的间隔
+
+                .WriteTo.File(Path.Combine( "logs","log.txt"), rollingInterval: RollingInterval.Day)
+
+                //创建这个log
+
+                .CreateLogger();
+4 在main函数的下面添加
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+
+            WebHost.CreateDefaultBuilder(args)
+
+                //添加这一句
+        	.UseSerilog()
+
+                .UseStartup<Startup>();
+
+5 使用的时候和内置的使用方法一致
+
+
+6 配置信息
+  appsettings中有一部分logging的存放log的信息，通过正常的字符串读取即可得到
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+
+            WebHost.CreateDefaultBuilder(args)
+
+            .ConfigureLogging((a,b)=> {
+                b.AddConfiguration(a.Configuration.GetSection("Logging"));
+            })
+                .UseStartup<Startup>();
+这是读取默认的，第三方的还没有搞明白
+
+appsettings.development中有一个logging 其中default定义了最低什么级别的日志可以被记录，可以自己设定
+想要的最低级别的日志
+
+

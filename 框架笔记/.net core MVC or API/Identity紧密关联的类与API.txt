@@ -1,0 +1,11 @@
+与Identity紧密关联的类与API（目前只知道6个）类
+1 IdentityUserClaim            用户的声明权限类
+2 IdentityUser 		       用户类
+3 IdentityRole 		       用户的角色类
+4 SignInManager<IdentityUser>  暂时还没有搞清楚
+5 UserManager<IdentityUser>    负责用户的相关操作
+6 RoleManager<IdentityRole>    负责角色的相关操作
+
+  
+
+

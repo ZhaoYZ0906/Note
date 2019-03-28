@@ -4,21 +4,21 @@ code first
 3在nameDbContext中写关于表的属性
 public DbSet<表名> Students { get; set; }
 4重写一个叫OnModelCreating的方法
- protected override void OnModelCreating(ModelBuilder modelBuilder)
++------- override void OnModelCreating(ModelBuilder modelBuilder)
 注意参数
 
 5方法里面可以写
 建表：modelBuilder.Entity<Student>().ToTable("Student");
 表的设置等
 
-不自动生成主键
+不自动生成主键（不自增长）
 modelBuilder.Entity<Course>().ToTable("Course").Property(a => a.CourseId).ValueGeneratedNever();
 
 配置一对多关系
 				1		多
 modelBuilder.Entity<Enrollment>().HasOne(a => a.Student).WithMany(a => a.Enrollments);
 
-6 startup文件中依赖注入读取配置文件
+6 startup文件中依赖注入读取配置文件/注册服务
 services.AddDbContext<MySchoolDbContext>(d => d.UseSqlServer(Configuration.GetConnectionString("Default")));
 
 7 配置文件
@@ -37,7 +37,8 @@ var host = BuildWebHost(args);
                 try
                 {
                     var content = services.GetRequiredService<MySchoolDbContext>();
-                    DbInitializer.Initialize(content);
+	    调用初始化数据
+                    DbInitializer类.Initialize(content一个dbcontent)方法;
                 }
                 catch (Exception e)
                 {
@@ -54,3 +55,33 @@ host.Run();
 
 
 第一次使用记录，可能存在理解混乱
+
+
+
+多个DBContext的数据库迁移
+
+第一个dbcontext一定数据库迁移正常
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

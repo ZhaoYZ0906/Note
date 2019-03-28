@@ -1,0 +1,18 @@
+xss：cross-site scripying
+指恶意用户在输入数据时不按常规操作输入，输入js脚本等字符比如输入：<script>alert("xxx")</script>
+当恶意用户输入完成后，下一位用户进入这个界面，则会额外执行恶意脚本的操作，影响正常使用
+
+预防措施：
+使用HtmlEncoder进行防范
+
+因为htmlencoder在core中是自带的所以直接注入即可
+
+private readonly HtmlEncoder htmlEncoder;
+public AlbumController(IAlbumService albumService,HtmlEncoder htmlEncoder)
+  {            
+	this.htmlEncoder = htmlEncoder;
+  }
+
+
+使用方法： htmlEncoder.Encode( 前台传回的值)
+加入前台传回的值中有<或者>则自动改变为&lt或者&gt

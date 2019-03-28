@@ -1,0 +1,129 @@
+绑定单个值 asp-for=“1”-------  ActionResult Index(id)
+
+绑定对象的值 
+@model viewmodel{int Id；string name；}
+ asp-for=“Id”------  ActionResult Index(viewmodel vm)
+
+如果model里面存在嵌套类的话只需要 asp-for“xxx.xxx”即可
+
+绑定集合
+@model list< viewmodel>
+ asp-for=“@Model[1].xxx”------  ActionResult Index(List<viewmodel> vm)
+
+
+指定绑定值的来源：
+使用特性绑定：
+        [FromBody]
+        [FromRoute]
+        [FromQuery]
+        [FromHeader]
+        [FromForm]
+制定不同的来源
+
+
+有选择的绑定属性：
+ public ActionResult Create([Bind("属性名")]ViewModel ViewModel)-----绑定哪个属性
+
+[BindNever]
+string name{get;set;}
+在ActionResult接收数据的时候，这个属性不会被自动绑定
+
+[BindRequired]
+int id{get;set;}
+在ActionResult接收数据的时候，这个属性必须自动绑定
+
+
+
+
+属性的远程验证
+
+客户端调用active方法进行验证
+例如用户在注册时，输入用户名，用户名文本框失去焦点的时候就将用户名传递到制定的active进行验证
+，如果正确返回true错误返回错误信息
+（有点像ajax验证用户是否存在）
+
+验证的属性：
+        [Remote("active名称","控制器名称",ErrorMessage ="用户名有问题！")]
+        public string name { get; set; }
+
+指定方法：
+
+        [AcceptVerbs("Get", "Post")]//post和get都可以接收
+        public async Task<IActionResult> hhh([Bind("name")]string name)
+        {
+            var obj = await roleManager.FindByNameAsync(name);
+            if (obj != null)
+            {
+                return Json(false);
+            }
+            return Json(true);
+        }
+
+前段正常写即可
+
+
+
+
+自定义特性实现model验证扩展：
+
+    public class ViliAttribute : Attribute, IModelValidator（必须继承于Attribute，必须实现IModelValidator）
+    {
+	//存放错误信息
+        public string Error { get; set; }
+	//重写关键方法
+        public IEnumerable<ModelValidationResult> Validate(ModelValidationContext context)
+        {
+            //进行逻辑判断
+            var url = context.Model as string;
+            if (url!=null&& Uri.IsWellFormedUriString(url,UriKind.Absolute))
+            {
+		//返回空参数代表成功
+                return Enumerable.Empty<ModelValidationResult>();
+            }
+		//返回有值参数代表失败
+            return new List<ModelValidationResult>() {
+                new ModelValidationResult(string.Empty,Error)
+            };
+        }
+    }
+
+使用方法：
+        [Vili(Error ="不正确")]
+        
+	public string CoverUrl { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

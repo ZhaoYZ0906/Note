@@ -1,0 +1,92 @@
+Role（角色）
+
+数据结构：Identity对象在数据库中生成Role表中的所有字段
+
+用途：负责用户的角色类配合RoleManager完成相关角色功能
+
+注意：IdentityRole类为作用于IdentityUser之上的对象，是针对用户角色的操作
+角色类好像不可以扩展
+
+注册服务：
+
+	services.AddIdentity<ApplicationUser,IdentityRole（加一个这个就可以了）>(options=> {
+                options.Password.RequireDigit = false;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+使用方法：
+
+1 接收注入：
+	private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
+        public RoleController(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager
+            )
+        {
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+        }
+
+2 创建角色
+
+            var role = new IdentityRole()
+            {
+                Name = roleViewModel.name
+            };
+
+            var logo = await roleManager.CreateAsync(role);
+
+3 修改角色
+ //查询
+ var role =await roleManager.FindByIdAsync(editRoleViewModel.Id);
+ //修改
+ role.Name = editRoleViewModel.name;
+ //更新
+ var result =await roleManager.UpdateAsync(role);
+
+4 查询出当前角色下的所有用户
+
+		//查询角色
+	    var role = await roleManager.FindByIdAsync(id);
+   		//创建一个viewmodel
+            var roleViewModel = new EditRoleViewModel()
+            {
+                Id = id,
+                name = role.Name,
+                users = new List<string>()
+            };
+		//取出所有user
+            var user = await userManager.Users.ToListAsync();
+
+            foreach (var item in user)
+            {	//判断是否为这个角色
+                if (await userManager.IsInRoleAsync(item, role.Name))
+                {
+                    roleViewModel.users.Add(item.UserName);
+                }
+            }
+
+
+5 删除某个角色
+
+	var role = await roleManager.FindByIdAsync(Id);
+
+	var result=await roleManager.DeleteAsync(role);
+
+
+6 将某个角色添加/移除到某个用户
+//查询用户和角色
+var role =await roleManager.FindByIdAsync(addUserToRoleVM.RoleId);
+var user =await userManager.FindByIdAsync(addUserToRoleVM.UserId);
+//添加/移除
+var result= await userManager.AddToRoleAsync/RemoveFromRoleAsync(user, role.Name);
+
+
+
+
+
+
+
+

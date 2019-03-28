@@ -1,0 +1,136 @@
+html生成代码 <a href="mailto:123@163.com">123@163.com</a>
+
+视图代码 <Email mail-to="123@163.com"></Email>
+自定义标签 <Email>
+自定义属性 mail-to
+
+
+自定义TagHelper类
+public class EmailTagHelper : TagHelper
+   //必须TagHelper结尾，开头必须和自定义标签对应起来
+ {
+
+	//自定义属性：将自定义的属性每个单词的第一个字母大写并且去掉横岗-
+        public string MailTo { get; set; }
+
+
+	//重写关键方法
+
+        public override void Process(
+
+            TagHelperContext context,
+
+            TagHelperOutput output)
+
+        {
+	    //将email标签替换成a标签
+            output.TagName = "a";   
+	    //将自定义属性的值和原生的html属性进行拼装
+            output.Attributes.SetAttribute("href", $"mailto:{MailTo}");
+
+	    //填充html标签的文本部分
+            output.Content.SetContent(MailTo);
+
+        }
+
+	//两个方法作用一致，只不过异步的多了几个方法
+        public async override Task ProcessAsync(
+
+            TagHelperContext context,
+            TagHelperOutput output)
+
+        {
+
+            output.TagName = "a";
+	    //读取自定义标签的子类
+            var content = await output.GetChildContentAsync();
+
+	    //读取子类的文本（就是自定义标签的文本部分）
+            var target = content.GetContent();
+
+            output.Attributes.SetAttribute("href", "mailto:" + target);
+
+            output.Content.SetContent(target);
+
+        }
+}
+
+
+当想要用tag添加已给css时可以这样。。。
+1 建一个c#类
+    public class MyStyle
+    {
+        public string Color { get;  set; }
+        public int FontSize { get;  set; }
+        public string FontFamily { get;  set; }
+    }
+
+2 前台添加
+<p bold my-style="@(new MyStyle()
+    {
+        Color = "red",
+        FontFamily = "SimHei",
+        FontSize = 30
+    })">应该是粗字体.</p>
+
+3 自定义一个tag
+
+    //两个特性是“或”的关系
+    //具有bold属性的可以使用
+    [HtmlTargetElement(Attributes = "bold")]
+    //以bold为标签的可以使用
+    [HtmlTargetElement("bold")]
+
+    public class BoldTagHelper : TagHelper
+    {
+	//指定 my-style 属性使用
+        [HtmlAttributeName("my-style")]
+        public MyStyle MyStyle { get; set; }
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+	    //移除bold属性
+            output.Attributes.RemoveAll("bold");
+            //以<strong>为开头
+            output.PreContent.SetHtmlContent("<strong>");
+            //以<strong>为结尾  相当于  <strong><p>xxxx</p></strong>
+            output.PostContent.SetHtmlContent("</strong>");
+	    //拼装属性
+            output.Attributes
+               .SetAttribute("style", $"color: {MyStyle.Color}; font-size: {MyStyle.FontSize}; font-family: {MyStyle.FontFamily};");
+        }
+    }
+
+
+总结：好像有时候定义的属性传递数据，传递不过来，目前不知道为什么。
+觉得这种东西还是前台干比较好，而且传递数据asp-for可以搞定绝大部分
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

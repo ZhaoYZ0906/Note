@@ -1,0 +1,12 @@
+环境变量：
+env.IsDevelopment()
+
+错误信息：
+app.UseDeveloperExceptionPage();
+app.UseExceptionHandler();
+
+
+文件访问：
+app.UseFileServer();
+app.UseDefaultFiles();（改变请求路径）
+app.UseStaticFiles()（根据改变的路径找到文件）;

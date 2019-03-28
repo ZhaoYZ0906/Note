@@ -1,0 +1,15 @@
+CSRF：伪造跨域访问
+异常用户通过伪造的请求访问网站
+
+预防措施：
+特性预防：
+
+[ValidateAntiforgeryToken]:针对一个方法，ActionResult级别
+[AutoValidateAntiforgeryToken]：针对一个控制器，Controller级别
+[IgnoreAntiforgeryToken]：当前方法/控制器不适用预防
+
+注册服务预防
+
+services.AddAntiforgery(这里面可以写配置信息，具体见文档- anti-request forgery);
+services.AddMvc(option => { option.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()); });
+//相当于给所有的文件都加上[AutoValidateAntiforgeryToken]特性

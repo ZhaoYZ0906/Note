@@ -1,0 +1,13 @@
+诊断中间件：用于当程序出错时，中间件对错误信息的处理
+
+位置：using Microsoft.AspNetCore.Builder;
+
+常用的诊断中间件：
+
+app.UseDeveloperExceptionPage();-----//显示异常的详细信息
+
+app.UseStatusCodePages();-----//显示400-599的状态码
+
+app.UseDatabaseErrorPage();-----//这个什么都不显示
+
+app.UseExceptionHandler("/Home/Error");-----//到指定的页面这个页面在Shared文件夹中，也可以自定义一个

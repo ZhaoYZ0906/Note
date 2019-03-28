@@ -1,0 +1,107 @@
+User（用户）
+
+数据结构：Identity对象在数据库中生成user表中的所有字段
+
+用途：负责用户的基本类配合UserManager完成用户的基本功能
+
+注意：IdentityUser类为Identity中最基础的对象，其他identity对象都是围绕User展开工作，所有user必须先建立
+
+
+
+注册服务：
+	    //创建一个数据库链接
+	    services.AddDbContext<IdentityDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<IdentityUser>(options=> {
+		//关于用户的一些设定，比如密码设定
+                options.Password.RequireDigit = false;
+            })
+            .AddEntityFrameworkStores<IdentityDbContext>();
+
+
+使用方法
+
+1 接收注入：
+        private readonly UserManager<ApplicationUser> userManager;
+      
+        public UserController(UserManager<ApplicationUser> userManager)
+        {
+            this.userManager = userManager;
+        }
+
+2 使用注入对象完成增
+
+action中：
+	    //创建一个对象
+	    var user = new IdentityUser()
+            {
+                UserName = userCreateViewModel.UserName,
+                Email = userCreateViewModel.Email
+            };
+ 	    //在数据库中进行创建
+            var result = await userManager.CreateAsync(user, userCreateViewModel.PassWord);
+
+3 删
+	    //根据id/name/等查询出对象
+            var user = await userManager.FindByIdAsync(id);
+	    //删除
+            var logo = await userManager.DeleteAsync(user);
+
+4 改
+	    //根据id/name/等查询出对象
+	    var user = await userManager.FindByIdAsync(editViewModel.Id);
+	    //更新数据到对象
+            user.UserName = editViewModel.UserName;
+            user.PasswordHash = editViewModel.PassWord;
+            user.Email = editViewModel.Email;
+	    //更新到数据库
+            var logo = await userManager.UpdateAsync(user);
+
+
+IdentityUser扩展：
+
+IdentityUser自带的不具备某些属性（比如身份证号等）可以根据自己的需求对IdentityUser进行扩展
+
+具体方法：
+
+1  创建一个类一定要继承于IdentityUser，并且添加扩展的属性
+	public class ApplicationUser:IdentityUser
+2  将注册服务修改为：
+
+            services.AddDbContext<IdentityDbContext<扩展类名>>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<扩展类名>(options=> {
+		//用户设置
+            })                
+                .AddEntityFrameworkStores<IdentityDbContext<扩展类名>>();
+
+
+3 如果对IdentityUser进行扩展后，也要对IdentityDbContext进行扩展则
+
+
+ 	    services.AddDbContext<扩展DbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser>(options=> {
+                //用户设置
+            })
+                .AddEntityFrameworkStores<扩展DbContext>();
+
+DbContext扩展类：
+
+ public class 扩展类名DbContext : IdentityDbContext<ApplicationUser>
+ //一定要写这个泛型，不然DbContext与扩展user连接不到
+
+
+
+
+
+
+
+
+

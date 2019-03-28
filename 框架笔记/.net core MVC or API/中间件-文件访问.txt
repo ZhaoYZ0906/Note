@@ -1,10 +1,7 @@
+文件访问中间件：负责根据路径访问指定文件
 
-env.IsDevelopment()
-获取当前环境，env为方法参数 
-app.UseDeveloperExceptionPage();
-开发环境：抛出所有的异常信息，一定要放在前面
-app.UseExceptionHandler();
-生产环境：抛出所有的异常信息，一定要放在前面
+位置：Microsoft.AspNetCore.Builder
 
+常用：
 app.UseFileServer(); = app.UseDefaultFiles();（改变请求路径）+app.UseStaticFiles()（根据改变的路径找到文件）;
 使网页拥有访问制定文件的能力，有了这个再能在地址栏/Index访问静态index.html，如果找不到则返回默认值

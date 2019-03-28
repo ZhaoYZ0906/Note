@@ -16,3 +16,6 @@ private readonly IMyserver<student> myserver;
         {
             this.myserver = myserver;
         }
+
+view视图的razer中的依赖注入
+    @inject xxx类的服务 名称

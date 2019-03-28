@@ -1,0 +1,62 @@
+_ViewImports视图适合添加引用类
+
+_ViewStart添加模板的引用，确定模板引用的范围
+如果放在view文件夹下则对所有view起作用，如果放在某个控制器的视图文件夹下，
+则只对这个控制器的视图起作用
+
+_Layout：公共模板，里面除了正常的前端外还有:
+@RenderBody()，其他使用了模板的主要编辑区域
+@RenderSection("name", required: false)，其他使用了模板的次要编辑区域
+required: false   true使用了模板的页面必须有，false不是必须有，使用的话需要手动开启
+开启方法：
+    @section name{ 
+	内容
+    }
+
+
+视图组建与分布式图：
+共性：提高代码复用性
+区别：分布式图依赖于父视图提供的数据两者逻辑一致（比如：都是用student的数据）
+          视图组建不依赖于父视图的数据，自己为自己提供数据，两者逻辑不通（一个用student，一个用teacher）
+	
+分布式图：
+正常添加一个视图，分布式图一般以_开头。比如 _index1
+在分布式图中添加model引用（和正常试图一样），写出分布式图的内容
+
+引用：
+1 使用htmlhelper类：@Html.Partial("分布式图名",model对象)
+2 使用taghelper类： <partial name="分布式图名" for="@model对象">
+
+尽量使用taghelper
+
+
+view component（视图组建）
+视图组建可以理解为一个小型的mvc请求
+因为有自己的逻辑所以有类似于控制器的类，叫viewcomponent
+
+1 创建components（对应控制器文件夹）文件夹，创建xxx（对应home控制器文件夹）文件夹。
+xxx为components的前半部分，视图对应控制器下的方法，所以放在xxx文件夹下
+
+2 创建一个类以viewcomponent结尾，并继承于viewcomponent，比如 “nameviewcomponent”
+
+3 添加一个Invoke方法（必须叫这个名字）,方法里面写与父视图不同的逻辑
+
+4 return View("视图名", model);
+
+5 view.shared（作用于当前项目，如果创建在某个控制器试图文件夹下则只能这个控制器的视图调用此组建）下，
+创建叫做components的文件夹（对应mvc的view文件夹），里面创建“name”文件夹（对应控制器名的文件夹），
+里面创建 "视图名" 的视图
+整个文件夹结构对应mvc中 vc的对应结构，所以可以理解为一个小型的mvc请求
+
+6 在父页面调用时（正常的view视图）
+htmlhelper类：@await Component.InvokeAsync("name")
+taghelper类：<vc:welcome></vc:welcome>
+
+使用tag类时请在_ViewImports文件中注册当前项目，不然tag找不到"nameviewcomponent"的文件
+@addTagHelper *,项目名
+注意这两种方法都是nameviewcomponent前半段的名字，不是视图名
+
+
+
+
+

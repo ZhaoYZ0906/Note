@@ -17,3 +17,22 @@ Nuget方式
 3 完成出现一个叫migrations的文件夹，
 4 输入update-database
 5 修改字符串
+
+
+
+多个DBContext的数据库迁移
+
+1 第一个dbcontext一定数据库迁移正常
+
+2 后面的生成迁移文件时会提示具有多个dbcontext请制定具体的dbcontext
+写成 add-migration new -Context IdentityDbContext
+然后会提示目标程序集不符,写成
+ services.AddDbContext<xxxDbcontext>(
+	d => d.UseSqlServer(Configuration.GetConnectionString("default"),
+	 b => b.MigrationsAssembly("程序集名称"))
+);
+
+3 update-database时记得要指明dbcontext
+update-database -Context xxxDbcontext
+
+
