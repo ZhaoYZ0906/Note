@@ -1,0 +1,34 @@
+其中可能有一部分不正确
+
+1 GetApis（）:
+	return new ApiResource[]
+            {
+                new ApiResource("api1", "My API #1")
+            };
+
+感觉这个api1并不是指定了可以访问哪些具体api，而是设置拥有访问api1（api1应该为一些api集合的名字）权利的令牌，
+然后API端口可以设置是否允许拥有api1权利令牌的客户访问
+最后在设定 设置 访问api1权利令牌 的时候也可以在api1这个令牌上附加上一些信息
+比如这样？
+
+//将api划分作用域，好像可以这么理解
+            return new ApiResource[]
+            {	//"restapi"这个很重要在消费者和API中都要用
+                new ApiResource("restapi", "myrestapi",new List<string>{
+		    //这里可能是idp给他附加的
+                    "name",
+                    "gender",
+                    JwtClaimTypes.PreferredUserName,
+                    JwtClaimTypes.Picture})
+            };
+
+
+2 发现文档：
+
+var disco =await client.GetDiscoveryDocumentAsync("idp地址");
+发现文档应该就是根目录，里面包含了一些有用的url链接。比如请求identity资源时的链接
+disco.UserInfoEndpoint
+
+
+
+

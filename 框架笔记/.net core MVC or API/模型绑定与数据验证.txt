@@ -35,7 +35,8 @@ int id{get;set;}
 
 
 
-属性的远程验证
+
+1 属性的远程验证
 
 客户端调用active方法进行验证
 例如用户在注册时，输入用户名，用户名文本框失去焦点的时候就将用户名传递到制定的active进行验证
@@ -64,7 +65,7 @@ int id{get;set;}
 
 
 
-自定义特性实现model验证扩展：
+2 自定义特性实现model验证扩展：
 
     public class ViliAttribute : Attribute, IModelValidator（必须继承于Attribute，必须实现IModelValidator）
     {
@@ -94,7 +95,32 @@ int id{get;set;}
 
 
 
+3 FluentValidation框架验证：
 
+3.1 安装FluentValidation包
+
+3.1.1 注入
+
+services.AddMvc().AddFluentValidation();
+
+3.2 写一个以Validator结尾的类继承与AbstractValidator<要验证的类>
+
+public class PostDtoValidator : AbstractValidator<PostDto>
+    {
+        public PostDtoValidator()
+        {
+            RuleFor(x => x.Author).
+                NotNull().//不为空                
+
+                WithMessage("{PropertyName}是必须存在的").//加一个备注，前一个验证失败（NotNull）的时候怎出发这个备注
+
+		WithName("作者").//类似于display（name=“作者”）
+
+                MaximumLength(50).//限定长度
+
+                WithMessage("{PropertyName}的最大长度是{MaxLength}");//前一个验证失败（MaximumLength）的时候怎出发这个备注
+        }
+    }
 
 
 

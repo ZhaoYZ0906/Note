@@ -1,0 +1,35 @@
+代码里面有三个方法
+
+ 	/// <summary>
+        /// 针对集合产生link，link里面有上一集合，下一集合（上一页下一页）
+        /// </summary>
+        /// <param name="postResourceParameters"></param>
+        /// <param name="hasPrevious"></param>
+        /// <param name="hasNext"></param>
+        /// <returns></returns>
+        private IEnumerable<LinkDto> CreateLinksForPosts(PostParameter postResourceParameters,
+            bool hasPrevious, bool hasNext)
+
+
+        /// <summary>
+        /// 针对单个对象生成link
+        /// </summary>
+        /// <param name="id">对象id</param>
+        /// <param name="fields">是否塑形</param>
+        /// <returns></returns>
+        private IEnumerable<LinkDto> CreateLinksForPost(int id, string fields = null)
+
+        /// <summary>
+        /// 生成上一页下一页的url
+        /// </summary>
+        /// <param name="parameters">查询参数包括当前第几页，一页几行</param>
+        /// <param name="uriType">生成的是上一页的url还是下一页的url</param>
+        /// <returns></returns>
+        private string CreatePostUri(PostParameter parameters, DtoUriType uriType)
+
+CreatePostUri/CreateLinksForPost可以单独使用
+CreateLinksForPosts依赖于CreatePostUri
+
+两个cs文件是数据结构
+
+querypxxx负责接收链接的参数，urltype是枚举了针对集合的链接类型（上一页下一页当前页）因为一页是一个集合

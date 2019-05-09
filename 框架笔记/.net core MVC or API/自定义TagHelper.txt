@@ -76,7 +76,7 @@ public class EmailTagHelper : TagHelper
 3 自定义一个tag
 
     //两个特性是“或”的关系
-    //具有bold属性的可以使用
+    //html具有bold属性的可以使用
     [HtmlTargetElement(Attributes = "bold")]
     //以bold为标签的可以使用
     [HtmlTargetElement("bold")]

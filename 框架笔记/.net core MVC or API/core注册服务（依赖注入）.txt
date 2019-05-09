@@ -5,6 +5,8 @@ services.AddScoped<IMyWelcome（接口类型）,myWelcome（实例化对象）>();
  //注册服务AddTransient每访问一个事件生成一个myWelcome,
 AddSingleton单例生成一个myWelcome,
 AddScoped每次请求生成一个myWelcome
+AddTransient的services是每次请求（不是指Http request）都会创建一个新的实例，
+它比较适合轻量级的无状态的（Stateless）的service。
 
 
 成为服务之后其他类想要使用的时候可以在构造函数中请求，管道自动将 服务 传递进行实例化对象

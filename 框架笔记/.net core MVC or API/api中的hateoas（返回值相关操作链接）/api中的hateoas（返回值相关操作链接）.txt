@@ -1,0 +1,86 @@
+hateoas的好处在于消费者不用知道api的其他方法就可以知道其他相关的操作
+
+坏处，返回的数据多了不少，而且需要自定义mediatype，否则违反了自我约束
+
+mediatype分为两种 accept：api返回的类型    Content-Type：发送给api的类型
+
+自我约束原则：请求的head中Accept属性对应请求资源application/json或者其他,则接受请求的方法需要返回
+application/json类型的资源，需要返回这个控制器对应的资源
+（比如这个控制器是针对a表的操作，则必须返回adto的数据类型）
+如果不返回这个类型资源，则需要自定义一个mediatype，返回自定义的资源，
+其实自定义的mediatype只是定义一个名称，包含内容由前后端自行商定
+
+在返回值中添加一个lins对象，让消费者了解关于当前对象的其他相关操作
+
+    {
+
+        "id": 2,
+
+        "title": "Post Title 1",
+
+        "body": "Post Body 1",
+
+	//加了个这玩意，具体生成见links生成
+        "links": [
+
+            {
+
+            "href": "https://localhost:5001/api/Posts/2?fields=id,title,body",
+
+            "rel": "self",
+
+            "method": "GET"
+
+             },
+
+            {
+ 
+             "href": null,
+
+             "rel": "delete_post",
+
+             "method": "DELETE"
+
+             }
+
+        ]
+
+    }
+
+1 先创建一个linkDto类 里面有这三个属性
+
+2 生成相关的链接  //见翻页和link生成
+
+3 将他返回
+
+            var result = new
+            {
+                Value = resultValue,//原本要返回的内容
+                resultLinkDto
+            };
+
+但是这样返回和请求的application/json不符合，比如请求posts的application/json就要返回posts
+所以自定义MediaType
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

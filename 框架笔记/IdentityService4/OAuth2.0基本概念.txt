@@ -1,0 +1,92 @@
+授权：让那些控制资源的人允许某个应用以代表他们来访问他们控制的资源。人授权给应用
+
+认证/身份验证：登录
+
+
+
+OAuth 2.0:是一个委托协议, 它可以让那些控制资源的人允许某个应用以代表他们来
+访问他们控制的资源, 这个应用从资源的所有者那里获得到授权(Authorization)
+和access token, 随后就可以使用这个access token来访问资源.
+
+OAuth 2.0：Authorization端点和Token端点
+
+
+
+OpenID Connect:建立在OAuth2协议上的一个简单的身份标识层, 所以OpenID Connect兼容OAuth2. 
+
+OIDC功能：使用OpenID Connect, 客户端应用可以请求一个叫identity token的token, 
+它会和access token一同返回给客户端应用. 这个identity token就可以被用来登录客户端应用
+程序, 而这个客户端应用还可以使用access token来访问API资源
+
+OIDC：Authentication端点和UserInfo端点
+
+
+
+
+授权服务器(Authorization Server, AS)：用户可以委派他的一部分权限给客户端应用来代表最终
+用户来访问被保护的资源. 但是要完成这件事, 还需要一个授权服务器来连接客户端应用和被保护
+资源.
+
+
+
+
+授权方式：
+Authorization Code：所有者通过浏览器访问到授权服务器确认是否授权，在授权服务器完成确认
+并把资源所有者送回到(重定向)客户端的时候带着这个临时的凭据: authorization code (我暂时
+叫它授权码吧), 它就代表着资源所有者委托给客户端应用的权限.
+
+Implicit：Authorization Code的一个简化版本, 它针对浏览器内的客户端应用
+(例如js, angular的应用)进行了优化. 在implicit流程里, 没有给客户端发送授权码
+(authorization code), 而是直接给它发送了access token.
+
+Resource Owner Password Credentials：接使用密码凭据(用户名和密码)作为授权来获得
+access token. 只有当资源所有者和客户端之间高度信任的时候并且其它授权方式不可用的时候才
+可以使用这种授权方式.
+
+Client Credentials：有时候, 资源或者叫资源服务器并不属于某个最终用户, 
+也就是没有资源所有者对该资源负责. 但是客户端应用肯定还是要访问这些资源, 这时候就只能
+使用Client Credentials这种授权方式了.
+
+好像一共有6种，另外三种没有找到学习视频。。
+
+
+
+
+4个角色：资源所有者 Resource Owner, 客户端 Client, 被保护资源 Protected Resource,
+ 授权服务器 Authorization Server.
+
+组件：
+
+Access Token:有时候只被叫做token, 它是用来访问被保护资源的凭据. 它是一个字符串, 它代表
+了给客户颁发的授权, 也就是委托给客户的权限. access token里面要描述出资源所有者授予的访
+问权限的范围和持续时间.
+
+Scopes（范围）：表示被保护资源那里的一套权限.scope用区分大小写的字符串表示, 可以用空格
+作为分隔符来表示多个scope.  Scope还具有叠加性.
+
+Refresh Token:由授权服务器发行给客户端应用，不会被发送给被保护的资源. refresh token来请
+求新的access token (尤其是当现在的access token过期或者失效时), 但这个过程就不需要资源所
+有者的参与了. Refresh Token是可选的, refresh token是在发行access token一同返回的.
+
+
+
+2个端点：
+
+授权端点(authorization endpoint)：是用来和资源所有者交互的, 资源所有者在这里进行登录
+(身份认证), 然后通过该端点可以对客户端进行授权(authorization grant). 授权服务器首先要
+验证资源所有者的身份, 但是验证的方式并不在OAuth2的协议范围内.
+
+Token端点(token endpoint), 客户端通过向token端点展示它的授权(auhtorization grant)或
+refresh token来获取access token. 除了implicit之外所有的授权类型都需要使用该端点, 
+因为implicit的access token是直接发行的.
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+Get, 查询, HttpGet, 例如: '/api/product', '/api/product/1'
+POST, 创建, HttpPost, '/api/product'
+PUT 整体修改更新 HttpPut, '/api/product/1'
+PATCH 部分更新, HttpPatch, '/api/product/1'
+DELETE 删除, HttpDelete, '/api/product/1
+
+具体代码见web.api---productcontrollers

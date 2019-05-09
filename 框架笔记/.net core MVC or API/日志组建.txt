@@ -48,17 +48,19 @@ Fatal, Ïàµ±ÑÏÖØ£¬¿ÉÒÔ¿Ï¶¨ÕâÖÖ´íÎóÒÑ¾­ÎÞ·¨ÐÞ¸´£¬²¢ÇÒÈç¹ûÏµÍ³¼ÌÐøÔËÐÐÏÂÈ¥µÄ»°ºó¹ûÑ
 
                 .Enrich.FromLogContext()
 
-                //Ð´µ½¿ØÖÆÌ¨
+                //Ð´µ½¿ØÖÆÌ¨ ¼ÇµÃ°²×°sink
 
                 .WriteTo.Console()
 
                 //Ð´µ½ÎÄ¼þ£¬Éú³ÉÎÄ¼þµÄ¼ä¸ô
+ ¼ÇµÃ°²×°sink  Path.Combine½«Á½¸ö×Ö·û´®Á´½ÓÎªÒ»¸öÂ·¾¶
 
                 .WriteTo.File(Path.Combine( "logs","log.txt"), rollingInterval: RollingInterval.Day)
 
                 //´´½¨Õâ¸ölog
 
                 .CreateLogger();
+
 4 ÔÚmainº¯ÊýµÄÏÂÃæÌí¼Ó
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
 

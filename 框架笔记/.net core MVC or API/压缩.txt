@@ -1,0 +1,6 @@
+针对于大于1kb的文件/数据进行压缩默认gzip格式
+
+依赖注入：services.AddResponseCompression();
+中间件：  app.UseResponseCompression();
+
+写上这两句即可

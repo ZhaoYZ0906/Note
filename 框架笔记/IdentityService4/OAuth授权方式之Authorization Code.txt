@@ -1,0 +1,113 @@
+Authorization Code:使用授权码进行授权/认证
+
+适用于保密客户端（Confidential Client）
+服务器端的Web应用
+对用户和客户端进行身份认证
+
+其实就是指mvc这种服务器渲染好了发给客户端的web应用
+
+API端：和Client Credentials方式配置一样不用变
+
+identityserver4端口：
+
+1 写一个客户端配置：
+		new Client
+                {
+                    ClientId = "MVC Client",
+                    ClientName = "My MVC Client",
+
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    ClientSecrets = { new Secret("MVC client".Sha256()) },
+
+                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+                    FrontChannelLogoutUri = "http://localhost:5002/signout-oidc",
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+
+                    //请求aeecsstoken和idtoken的时候允许将用户的信息附加到idtoken里面，这样会用就不用重新请求用户端点（userinfo）请求用户信息
+                    //flase情况下idtoken里面包含 id和用户姓名什么的基本信息，ture会额外包涵电话邮箱之类的东西
+                    AlwaysIncludeUserClaimsInIdToken=true,
+
+                    AllowOfflineAccess = true,
+                    AllowedScopes = {
+                        "api1" ,
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess
+                    }
+                },
+
+
+2 写好需要的api资源
+
+3 写好需要的identity资源
+
+
+mvc客户端：
+
+1 需要登陆的控制器加上[Authorize]
+
+2 identityserver配置依赖注入
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(o=> {
+                //这里其实写字符串也可以，只要和下面对应起来就行
+                o.DefaultScheme=CookieAuthenticationDefaults.AuthenticationScheme;//字符串常量写的是Cookies
+                o.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;//字符串常量写的是OpenIdConnect
+            }).
+            AddCookie(CookieAuthenticationDefaults.AuthenticationScheme).
+            AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, o=> {
+                o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                o.Authority = "http://localhost:5000";
+                o.RequireHttpsMetadata = false;
+                o.ClientId = "MVC Client";
+                o.ClientSecret = "MVC client";
+                o.SaveTokens = true;
+                o.ResponseType = "code";
+
+                o.Scope.Clear();
+                o.Scope.Add("api1");
+                o.Scope.Add(OidcConstants.StandardScopes.OpenId);
+                o.Scope.Add(OidcConstants.StandardScopes.Profile);
+
+                //请求RefreshToken，注释写的是什么脱机也能请求什么的。。。
+                o.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
+            });
+
+3 中间件：app.UseAuthentication();
+
+4 请求API即可
+
+ 	    var client = new HttpClient();
+            //这个发现文档在这里没用
+            //var disco=  await client.GetDiscoveryDocumentAsync();
+            var token = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            client.SetBearerToken(token);
+
+            var response= await client.GetAsync("http://localhost:5001/identity");
+
+            var str = await response.Content.ReadAsStringAsync();
+
+
+5 查看 accesstoken/idtoken/refreshtoken
+
+	     var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            var IdToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            //code只能用一次，当使用code请求了accesstoken和id token之后会从客户端移除
+            var code = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.Code);
+
+
+
+
+
+
+
+
+
+
+
+

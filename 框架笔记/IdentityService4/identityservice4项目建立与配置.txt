@@ -1,0 +1,211 @@
+1 安装： identityserver4.Templates包
+  dotnet new -i identityserver4.templates
+2 创建： dotnet new is4aspid --name xxx
+  她会弹出是否添加种子数据，添加即可
+
+说明：这东西的结构有点像mvc但是不全是
+
+3 基本文件说明：
+program：文件入口
+starup：依赖注入和中间件
+config：对identityserver4进行配置的文件，这个好像是identityserver4建立的标准dotnet没有这个
+quickstart文件夹：控制器，model，检查器，配置文件，里面都有，是identityserver4的核心
+ApplicationUser：identityuser的扩展类，identityuser代表对应表里面的一个实体
+data：一个dbcontext
+
+注意：依赖注入那里对dbcontext的注入默认使用sqlite，记得改成想要用的库
+      默认只能用于开发，想要生产需要另外配置，详情看文档吧
+
+4 startup和config注解：
+
+startup部分：
+
+ //配置identity
+            var builder = services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+            })
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())//关于identity配置
+                .AddInMemoryApiResources(Config.GetApis())//api配置
+                .AddInMemoryClients(Config.GetClients())//客户端配置
+                .AddAspNetIdentity<ApplicationUser>();
+
+这些配置都在config.cs里面可以自己更改
+
+
+
+
+
+config.cs部分：
+
+Config.GetApis：
+	    //将api划分作用域，好像可以这么理解
+            return new ApiResource[]
+            {	//"restapi"这个很重要在消费者和API中都要用
+                new ApiResource("restapi", "myrestapi",new List<string>{
+                    "name",
+                    "gender",
+                    JwtClaimTypes.PreferredUserName,
+                    JwtClaimTypes.Picture})
+            };
+
+一般有这些，可以讲api分为一个或者多个作用域，ApiResource的三个参数，
+1 这个作用域的名称
+2 作用域的显示名称
+3 作用域可以请求identity的信息，比如name就是user表里面的name
+
+
+GetIdentityResources：
+
+ 	//用户域包含用户信息
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new IdentityResource[]
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
+                new IdentityResources.Email()
+                
+            };
+        }
+写作用域可以请求到哪些信息
+
+GetClients：里面有三种身份认证配置，
+分别针对于：Authorization Code Flow/Implicit Flow/Hybrid Flow
+这三种身份认证详情见oidc简介
+
+		 // client credentials方式 flow client
+		//这个比较简易
+                new Client
+                {
+                    ClientId = "console client",
+                    ClientName = "Client Credentials Client",
+
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
+
+                    AllowedScopes = { "api1" }
+                }
+
+
+
+ 		// MVC client using    hybrid flow方式
+                new Client
+                {
+                    ClientId = "mvcclient",
+                    ClientName = "MVC 客户端",
+
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
+
+                    //在授权端点（就是这个）授权之后将token和accesstoken带到这个uri（只把前面的http链接改了就行，后面的额控制器名字不用改）
+                    RedirectUris = { "https://localhost:7001/signin-oidc" },
+                    //前端通过这个登出
+                    FrontChannelLogoutUri = "https://localhost:7001/signout-oidc",（只把前面的http链接改了就行，后面的额控制器名字不用改）
+                    //登出之后重定向
+                    PostLogoutRedirectUris = { "https://localhost:7001/signout-callback-oidc" },
+
+                    AllowOfflineAccess = true,
+                    //客户端可以请求的范围，必须带openid证明是个openid 类型的请求
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "restapi"
+                    }
+                },
+
+                // angular客户端配置  SPA client using     implicit flow方式
+                new Client
+                {
+                    //和ng那个一致
+                    ClientId = "blog-client",
+                    ClientName = "Blog Client",
+                    //ng地址
+                    ClientUri = "http://localhost:4200",
+
+                    //服务器类型
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    //控制是否通过浏览器为此客户端传输访问令牌（默认值为false）。当允许多个响应类型时，这可以防止访问令牌的意外泄漏。
+                    AllowAccessTokensViaBrowser = true,
+                    //认证的时候弹出同意确认框
+                    RequireConsent=true,
+                    //accsee有效期 秒
+                    AccessTokenLifetime=180,
+
+                    RedirectUris =
+                    {
+                        "http://localhost:4200/signin-oidc",（只把前面的http链接改了就行，后面的额控制器名字不用改）
+                        "http://localhost:4200/redirect-silentrenew"（只把前面的http链接改了就行，后面的额控制器名字不用改）
+                    },
+
+                    //登出后跳转
+                    PostLogoutRedirectUris = { "http://localhost:4200/" },
+                    //允许浏览器客户端跨域的地址，所以idp也要配置跨域
+                    AllowedCorsOrigins = { "http://localhost:4200" },
+
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "restapi"
+                    }
+                }
+            };
+
+
+5 启用https和hsts
+
+https见api里面core支持https
+hsts只是一个中间件：usehsts加上即可
+
+至此配置完毕，启动页面显示identitserver4的页面
+并且文件中有一个叫document的链接点开显示一堆json表示成功
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

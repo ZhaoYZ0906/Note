@@ -36,3 +36,33 @@ Nuget方式
 update-database -Context xxxDbcontext
 
 
+注意不管是nuget还是cli，进行迁移文件所在的项目必须装Microsoft.EntityFrameworkCore.SqlServer包
+
+当context和startup不在一个项目中时，需要在context的项目中添加一个类
+
+public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<MyContext>
+    {
+        public MyContext CreateDbContext(string[] args)
+        {
+            var builder = new DbContextOptionsBuilder<MyContext>();
+            builder.UseSqlServer("Data Source=.; Database=BlogDemo;User Id=sa;Password=123");
+            return new MyContext(builder.Options);
+        }
+    }
+这样使用cli进行数据库迁移的时候才能找到相关配置，因为context和startup不在一个项目中所以读取不到依赖
+注入里面的配置，在contetx中添加这个类之后就可一读取到配置，注意这个配置和依赖注入里面要一致
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

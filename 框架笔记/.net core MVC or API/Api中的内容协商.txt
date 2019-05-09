@@ -1,0 +1,22 @@
+内容协商：指api使用者可以在head中指定 提交到api/返回到消费者 的数据格式，
+	  如果api可以接收或返回这种格式则正常运行，如果不能接受或返回这种格式则返回406错误
+
+在head中 
+Accept（指定输出到消费者的格式）--application/xml
+Content-Type（指定提交到api的格式）--application/json
+
+
+.net core 默认返回json格式
+
+一般使用json和xml格式比较多，所以xml需要手动启用，406也需要手动启用
+只需要在服务里面更改：
+
+		services.AddMvc(
+                options =>
+                {
+                    //启用406状态码
+                    options.ReturnHttpNotAcceptable = true;
+
+                    //xml输出器
+                    options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                });

@@ -1,0 +1,51 @@
+种子数据：指如果当前数据库中没有数据则自动添加一部分数据
+
+1 新建种子数据
+
+public static class MyContextExtensions
+    {
+	//一定是静态，并且参数一定是调用类的扩展（this后面跟什么类，什么类就能用这个方法，当然自己也能用）
+        public static void EnsureSeedDataForContext(this MyContext context)
+        {
+		//有数据则返回
+            if (context.Products.Any())
+            {
+                return;
+            }
+	    //新建种子数据
+            var products = new List<Product>
+            {                
+                new Product
+                {
+                    Name = "啤酒",
+                    Price = 7.5f,
+                    Description = "这是啤酒啊"
+                }
+            };
+	    //添加到ef
+            context.Products.AddRange(products);
+	    //保存到数据库
+            context.SaveChanges();
+        }
+    }
+
+2 调用
+
+在中间件中调用
+//扩展类.方法     记得写在所有中间件的中下部分
+myContext.EnsureSeedDataForContext();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

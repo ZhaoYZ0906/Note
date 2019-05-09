@@ -1,0 +1,183 @@
+解释：因为mvc客户端属于传统的服务器客户端web应用，需要长时间的使用access token，
+需要refresh token，所以使用code flow或者hybrid flow身份认证（一般使用hybrid flow）（身份认证见oidc简介）
+
+hybrid flow方式！！！！！！
+
+1 修改mvc或者identity项目http地址保证两个不冲突
+
+2 修改identity项目客户端配置，具体见identity建立与配置
+
+3 配置mvc客户端：
+	    //依赖注入里面的
+	    //用于创建和验证JSON Web令牌的Microsoft.IdentityModel.Tokens.SecurityTokenHandler。
+            //关闭mvc端修改token的功能，保证只有idp端的修改。应该是这样
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+ 	services.AddAuthentication(options =>
+            {
+		//添加默认方案
+                options.DefaultScheme = "Cookies";//随便写，但是要和AddCookie("Cookies",   options.SignInScheme = "Cookies";这两个字符串一致
+		//添加默认验证方案
+                options.DefaultChallengeScheme = "oidc";//写oidc 但是要和.AddOpenIdConnect("oidc",这个字符串一致
+            })   
+	         //默认方案的具体配置
+                .AddCookie("Cookies", options =>
+                {
+                    //假如没有权限则跳转到这个地址
+                    options.AccessDeniedPath = "/Authorization/AccessDenied";
+                })
+	         //默认验证方案的具体配置
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.SignInScheme = "Cookies";
+                    //idp地址
+                    options.Authority = "https://localhost:5001";
+                    //启用https
+                    options.RequireHttpsMetadata = true;
+                    options.ClientId = "mvcclient";
+                    //请求的东西
+                    options.ResponseType = "code id_token";
+                    options.Scope.Clear();
+                    //这个要和idp.config对应方法（也就是mvcclient）中的 AllowedScopes = { IdentityServerConstants.StandardScopes.OpenId }
+                    //请求的东西一直，必须是idserver作用域里面允许的东西
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
+                    options.Scope.Add("restapi");
+
+                    //是否允许保存tokens
+                    options.SaveTokens = true;
+                    options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
+                    //是否可以从用户断点请求额外的信息
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                });
+        }
+
+中间件：
+app.UseAuthentication();在https重定向之后UseCookiePolicy/mvc之前
+
+4 给需要/不需要 验证的控制器添加[Authorize]/[AllowAnonymous]
+
+到这里应该就可以使用identity进行身份验证了，如果不行可以先看看14
+
+
+mvc端请求api需要的配置：
+
+5 读取identity返回的token等信息：
+await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+6 请求api 
+  在identity中给被保护的api划分作用域，修改身份认证配置中请求的范围，修改用户域包含用户信息
+（如果原来的 用户域包含用户信息 中没有当前要请求的东西时）
+（见配置部分.4 startup和config注解：）
+
+
+将API进行保护：
+
+7 保护api资源：nuget安装：IdentityServer4.AccessTokenValidation
+
+8 保护api配置：
+  依赖注入：
+            //保护API
+            services.
+                AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme).
+                AddIdentityServerAuthentication(option =>
+                {
+                    //授权地址
+                    option.Authority = "https://localhost:5001";
+		    //作用域的名字
+                    option.ApiName = "restapi";
+                });
+
+9 中间件：app.UseAuthentication();//mvc之前就行
+
+10 给需要/不需要 登陆的控制器添加[Authorize]/[AllowAnonymous]
+
+*11  如果嫌10一个一个加麻烦，可以写全局登陆策略和跨域配置
+
+	    //配置跨域策略
+            services.AddCors(options =>
+            {
+                //名字随便起
+                options.AddPolicy("AllowAngularDevOrigin",
+                    //允许4200的跨域
+                    builder => builder.WithOrigins("http://localhost:4200")
+                        //添加一个名字叫X-Pagination的header信息，X-Pagination在控制器中添加。见posts-104行
+                        .WithExposedHeaders("x-Pagination")
+                        //允许header
+                        .AllowAnyHeader()
+                        //允许method
+                        .AllowAnyMethod());
+            });
+
+            //注册全局策略（所有控制器的访问必须通过这些策略）（包括：跨域策略，认证策略和其他一些）
+            services.Configure<MvcOptions>(option =>
+            {
+                //添加跨域策略。要在认证策略之前，添加的策略和配置的策略名称要一致
+              option.Filters.Add(new CorsAuthorizationFilterFactory("AllowAngularDevOrigin"));
+
+                //添加一个认证策略
+                var policu = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                option.Filters.Add(new AuthorizeFilter(policu));
+
+            });
+	
+	跨域中间件：
+            //跨域中间件，在https之前，名称和上面的跨域配置一致
+            app.UseCors("AllowAngularDevOrigin");
+
+
+12 nuget安装IdentityModel包
+
+13 访问：
+
+ 	    //设置一个地址，指向6001
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:6001")
+            };
+            //把之前的清理掉
+            httpClient.DefaultRequestHeaders.Clear();
+            //定义媒体类型（mediatype）
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/vnd.zyz.hateoas+json")
+            );
+
+            //获取accesstoken-展示-获取BearerToken
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            ViewData["accessToken"] = accessToken;
+            httpClient.SetBearerToken(accessToken);
+
+            //访问api/posts
+            var res = await httpClient.GetAsync("api/Posts").ConfigureAwait(false);
+
+            //成功，数据返回view
+            if (res.IsSuccessStatusCode)
+            {
+                var json = await res.Content.ReadAsStringAsync().ConfigureAwait(false);
+                //解析成json对象
+                var objects = JsonConvert.DeserializeObject<dynamic>(json);
+                ViewData["json"] = objects;
+                return View();
+            }
+
+            //未验证重定向到下面这个
+            if (res.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Authorization");
+            }
+
+            //都不是则返回错误
+            throw new Exception($"Error Occurred: ${res.ReasonPhrase}");
+
+
+14 如果都弄好了还是不行，我感觉需要跨域配置，ng有跨域配置不知道为什么 mvc没有。。
+
+ 如果不行的话就加个跨域试试，配置方法在  Identity service4集成到ng 
+ 第6步，这是在identity配置，mvc的跨域在11步
+
+
+
+
+
+

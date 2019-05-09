@@ -1,0 +1,100 @@
+ /// <summary>
+        /// 生成上一页下一页的url
+        /// </summary>
+        /// <param name="parameters">查询参数包括当前第几页，一页几行</param>
+        /// <param name="uriType">生成的是上一页的url还是下一页的url</param>
+        /// <returns></returns>
+        private string CreatePostUri(PostParameter parameters, DtoUriType uriType)
+        {
+            switch (uriType)
+            {
+                case DtoUriType.PreviousPage:
+                    var previousParameters = new
+                    {
+                        pageIndex = parameters.PageIndex - 1,
+                        pageSize = parameters.PageSize,
+                        orderBy = parameters.OrderBy,
+                        fields = parameters.Fields
+                    };
+                    return urlHelper.Link("GetPosts", previousParameters);
+
+                case DtoUriType.NextPage:
+                    var nextParameters = new
+                    {
+                        pageIndex = parameters.PageIndex + 1,
+                        pageSize = parameters.PageSize,
+                        orderBy = parameters.OrderBy,
+                        fields = parameters.Fields
+                    };
+                    return urlHelper.Link("GetPosts", nextParameters);
+
+                default:
+                    var currentParameters = new
+                    {
+                        pageIndex = parameters.PageIndex,
+                        pageSize = parameters.PageSize,
+                        orderBy = parameters.OrderBy,
+                        fields = parameters.Fields
+                    };
+                    return urlHelper.Link("GetPosts", currentParameters);
+            }
+        }
+
+
+
+
+
+        private IEnumerable<LinkDto> CreateLinksForPost(int id, string fields = null)
+        {
+            var links = new List<LinkDto>();
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(
+                    new LinkDto(
+                        urlHelper.Link("GetPost", new { id }), "self", "GET"));
+            }
+            else
+            {
+                links.Add(
+                    new LinkDto(
+                        urlHelper.Link("GetPost", new { id, fields }), "self", "GET"));
+            }
+
+            links.Add(
+                new LinkDto(
+                    urlHelper.Link("DeletePost", new { id }), "delete_post", "DELETE"));
+
+            return links;
+        }
+
+        private IEnumerable<LinkDto> CreateLinksForPosts(PostParameter postResourceParameters,
+            bool hasPrevious, bool hasNext)
+        {
+            var links = new List<LinkDto>
+            {
+                new LinkDto(
+                    CreatePostUri(postResourceParameters, DtoUriType.CurrentPage),
+                    "self", "GET")
+            };
+
+            if (hasPrevious)
+            {
+                links.Add(
+                    new LinkDto(
+                        CreatePostUri(postResourceParameters, DtoUriType.PreviousPage),
+                        "previous_page", "GET"));
+            }
+
+            if (hasNext)
+            {
+                links.Add(
+                    new LinkDto(
+                        CreatePostUri(postResourceParameters, DtoUriType.NextPage),
+                        "next_page", "GET"));
+            }
+
+            return links;
+        }
+
+    }

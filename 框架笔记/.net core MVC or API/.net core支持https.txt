@@ -1,0 +1,15 @@
+1 写入中间件：
+
+app.UseHttpsRedirection();
+
+2 依赖注入
+
+services.AddHttpsRedirection(o => {
+                //重定向状态嘛
+                o.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                //设定端口   这个端口号好像要和launchsettings.json里面的 
+		// "applicationUrl": "https://localhost:5001（和这个相同）;http://localhost:5000"
+                o.HttpsPort = 5001;
+            });
+
+3 launchsettings中 "applicationUrl": "https://localhost:5001（这个和设置的要一致）;http://localhost:5000"

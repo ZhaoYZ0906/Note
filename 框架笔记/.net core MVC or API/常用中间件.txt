@@ -10,3 +10,7 @@ app.UseExceptionHandler();
 app.UseFileServer();
 app.UseDefaultFiles();（改变请求路径）
 app.UseStaticFiles()（根据改变的路径找到文件）;
+
+
+https：
+app.UseHttpsRedirection();

@@ -1,0 +1,48 @@
+Entity是系统内部使用不适合全部发送到浏览器，所以让Dto来返回适合发送到客户端的数据
+Dto具体见 设计模式--数据对象
+
+两者的关系映射：
+
+1 手写（简单但是麻烦）
+2 第三方映射库
+目前只学习了AoTuMapper所以只介绍这个
+
+2.1 安装相应的包，一般安装两个（在那个项目用就安装在哪里）
+AutoMapper 和 AutoMapper.Extensions.Microsoft.DependencyInjection
+
+2.2 配置文件：
+AiToMapper需要手动书写一个配置文件一般以ProFile结尾并集成于ProFile
+
+在构造函数中写对应的映射关系：
+
+从PostDto映射到Post
+CreateMap<PostDto, Post>();
+
+从 Post 映射到 PostDto 并且 PostDto.updatetime 属性对应的是 Post.LastModified 这个属性             
+CreateMap<Post,PostDto>().ForMember(a=>a.updatetime,b=>b.MapFrom(c=>c.LastModified));
+
+2.3 服务注入：services.AddAutoMapper();
+
+2.4 注入接收
+ public PostsController(IMapper mapper)
+        {
+            this.mapper = mapper;
+        }
+
+2.5 使用：
+
+var result = await repository.GetPostsAllAsync();
+
+//将result从 IEnumerable<Post> 映射到 IEnumerable<PostDto>，也可以
+//mapper.Map<Post, PostDto>(xxx);
+
+var ss=mapper.Map<IEnumerable<Post>, IEnumerable<PostDto>>(result);
+
+
+
+
+
+
+
+
+

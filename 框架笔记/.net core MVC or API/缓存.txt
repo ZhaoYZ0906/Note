@@ -1,0 +1,119 @@
+
+
+一 本地缓存（IN-MEMORY）：最简单的缓存
+
+使用步骤：
+1 依赖注入：
+	services.AddMemoryCache();
+
+        public AlbumController(IMemoryCache memoryCache)
+        {
+            this.memoryCache = memoryCache;
+        }
+
+2 使用：
+	public async Task<ActionResult> Index()
+        {
+	    //从缓存中查找并且带回查找的参数和返回是否找到
+            if (!memoryCache.TryGetValue(
+		CacheEntryConstants.AlbumsOfToday,
+		out List<Album> AlbumList))
+            {
+	  	//没找到则数据库查找
+                AlbumList = await _albumService.GetAllAsync();
+
+		//查找完毕后，进行缓存的参数设置
+                var CacheOption = new MemoryCacheEntryOptions()
+		    //绝对时间（10000秒后一定过期）
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(10000))
+		    //相对时间（在30秒内无人访问过期，如果有人访问则计时器从头计时）
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(30))
+		    //回掉函数，CacheOption对应的缓存（这里指AlbumList在缓存中被清除后）被清除后调用
+                    .RegisterPostEvictionCallback(huidaio,this);
+
+		//将key（自己起），value（数据库中读取的数据），设置值（上面设置的那些）添加到缓存当中
+                memoryCache.Set(CacheEntryConstants.AlbumsOfToday, AlbumList, CacheOption);
+
+            }
+	    //找到了则直接返回
+            return View(AlbumList);
+        }
+
+        //缓存的回调函数
+        private void huidaio(object key, object value, EvictionReason reason, object state)
+        {
+		具体逻辑
+        }
+
+二 本地缓存（CACHE TAG HELPER）：与第一个缓存类似，不过这个作用于view
+
+使用步骤：
+1 依赖注入（只需要在服务那里注入应该就可以，猜测）
+2 视图：<cache expires-after="@TimeSpan.FromSeconds(20)（绝对过期时间）（这里可以有很多属性，详情见文档）"></cache>
+
+
+
+三 分布式缓存：学redis时做
+
+
+四 客户端缓存（RESPONSE/CacheProfile）:这是一个Attribute
+
+CacheProfile有以下几个属性：
+Duration：相对时间
+Location：设置缓存在哪里，
+有三个值 ResponseCacheLocation.None（不缓存）/Any（缓存在客户端和代理）/Client（缓存在客户端）
+NoStore：缓存是否存储，true为不设置
+VaryByHeader：通过检查那个header的值决定是否缓存
+
+
+使用方法：
+1 [ResponseCache(Duration = 30,Location =ResponseCacheLocation.Client]
+
+2 [ResponseCache(CacheProfileName ="defalut")]
+
+配置叫 defalut 的缓存方案，在服务中
+  services.AddMvc(
+                option => {
+                    option.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                    
+                    option.CacheProfiles.Add("defalut", new CacheProfile() {
+                        Duration = 60
+                    });
+                    option.CacheProfiles.Add("never", new CacheProfile()
+                    {
+                        Location = ResponseCacheLocation.None,
+                        NoStore=true
+                    });
+                    
+                }                
+            );
+
+注意事项：
+1 不适用于调试窗口，只适用于在浏览器中输入地址
+2 只适用于前进后退（浏览器左上角的箭头），不适用于刷新
+
+
+
+
+
+
+
+
+五 缓存中间件
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

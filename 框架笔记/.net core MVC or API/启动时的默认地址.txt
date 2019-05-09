@@ -1,0 +1,3 @@
+一种可以通过路由设置，就是那个home/Index
+
+第二种  launchSettings.json的"profiles": { "launchUrl": "想要的地址",其他的配置}

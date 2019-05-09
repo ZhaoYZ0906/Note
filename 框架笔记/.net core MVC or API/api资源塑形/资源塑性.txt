@@ -1,0 +1,16 @@
+资源塑性：消费者请求api返回数据时一般返回dto/vm，但是大部分情况下消费者不需要dto/vm里面所有的属性，
+这时候需要进行资源塑性，只返回api需要的部分
+
+1 先把两个文件+一个文件夹加上，一个是针对IEnumerable的塑形，一个针对单个对象的塑形，
+文件夹里面是检查器
+
+2 使用检查器进行检查：（记得注入）
+if (!typeHelperService.TypeHasProperties<PostDto>(postParameter.Fields))
+            {
+                return BadRequest("塑形属性不存在！");
+            } 
+
+
+3 直接用即可：
+ var result=ss.ToDynamicIEnumerable(需要返回的属性);。
+ var PostResult= postDto.ToDynamic(需要返回的属性);

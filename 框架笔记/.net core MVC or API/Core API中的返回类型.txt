@@ -1,0 +1,14 @@
+在API中一般返回json格式的数据（默认为json），如果有要求返回xml时候的数据时
+添加
+
+services.AddMvc().AddMvcOptions(
+                option => {
+                    option.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                }
+                );
+
+并在postman /headers中添加
+key：Accept   value：application/xml
+
+请求中这样显示：
+Content-Type →application/xml; 

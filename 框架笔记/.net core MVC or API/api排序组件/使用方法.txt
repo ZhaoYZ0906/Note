@@ -1,0 +1,26 @@
+1 将所有文件都添加到项目
+2 依赖注入：
+//PostPropertyMapping继承于PropertyMapping，PropertyMapping为抽象类负责dto与model的映射关系，
+//PostPropertyMapping负责postdto与post的映射关系
+
+            var propertyMappingContainer = new PropertyMappingContainer();
+            propertyMappingContainer.Register<PostPropertyMapping>();
+            services.AddSingleton<IPropertyMappingContainer>(propertyMappingContainer);
+
+//propertyMappingContainer 是一个手写的容器
+
+3 使用检查器进行检查
+//自带的检查器
+if (!propertyMappingContainer.ValidateMappingExistsFor<PostDto, Post>(postParameter.OrderBy))
+            {
+                return BadRequest("排序属性不存在！");
+            }
+
+4 使用：
+
+query必须为IQueryable类型，可以使用AsQueryable()进行转换
+postParameter是个viewmodel负责接受前台传来的值，OrderBy一个string表示按什么属性排序，具体见BlogDemo.core中的QueryParameter类             
+
+query = query.ApplySort(postParameter.OrderBy, propertyMappingContainer.Resolve<Dto, model());
+
+逻辑很难，使用很简单，具体例子见blogdemo中post控制器get方法中对应repository的getall方法（是在这里引用的这些文件）

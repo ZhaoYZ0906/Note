@@ -1,0 +1,48 @@
+MediaType：api和api消费者约定的 api消费者请求接收和发送的数据类型
+（比如约定 请求application/json，就是返回对应表的dto
+  比如约定 请求application/vnd.xxx+json，就是返回对应表的dtoks）
+
+
+api消费者请求application/json类型时，如果请求到a表的资源，则必须返回adto，但是为了使用hateoas，
+方便消费者获取相关操作，必须加一个links，这样返回的数据类型就变成了 adto+links，
+已经不符合application/json 所以需要自定义mediatype
+
+第一步：这一步相当重要（多使用这个）
+注册一个mediatype：
+ services.AddMvc(
+                options =>
+                {   //定义api接收mediatype              
+                    var intputFormatter = options.InputFormatters.OfType<JsonInputFormatter>().FirstOrDefault();
+                    if (intputFormatter != null)
+                    {
+                        intputFormatter.SupportedMediaTypes.Add("application/vnd.post.create+json");
+                    }
+		    //定义api返回mediatype 
+
+                    var outputFormatter = options.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
+                    if (outputFormatter != null)
+                    {
+                        outputFormatter.SupportedMediaTypes.Add("application/vnd.zyz.hateoas+json");
+                    }
+                })
+
+第二步：
+添加文件
+
+第三步：
+接受请求的方法上加
+[RequestHeaderMatchingMediaType("Accpet",new[] { "注册的mediatype" })]
+
+
+
+还有另外一种方法：这个也要注册mediatype
+
+1 header中的accpet设置为application/xxx
+
+2 接受请求的方法中： public async Task<IActionResult> Get([FromQuery]PostParameter postParameter,
+（加这个） [FromHeader(Name = "Accept")] string mediaType)
+
+3 判断：
+	if (mediaType == "application/vdn.xxxx+json"){生成links的逻辑（links生产里面有）}
+
+4 返回

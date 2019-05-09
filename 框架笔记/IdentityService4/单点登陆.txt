@@ -1,0 +1,39 @@
+当客户端，API，idp都配置好，在客户端登陆之后，idp也会跟着登陆，相当于在客户端和idp两个程序里面登陆。
+
+假如还有客户端B，并且客户端B也使用idp。
+运行客户端B时触发登陆跳转到idp。idp发现已经登陆了。
+则重定向到客户端B。这样A和B只要有一个登陆，则另外一个程序不需要登陆也可以用
+
+A->idp->API1
+B->idp->API2
+
+理解：两个程序使用一个登陆系统
+
+只要都使用一套idp就是单点登陆
+
+关于登出：
+需要做两件事
+1 多个客户端中的一个客户端登出
+2 客户端登出之后出发idp登出
+
+比如客户端A登出，引发idp登出。客户端B访问API经过idp的时候，idp告诉客户端B：idp已经登出，所以无法访问API
+
+原理：
+一个客户端登入/登出。引发idp登陆/登出。导致其他客户端在第一次访问的时候自动登陆/登出
+
+代码实现：
+登陆只要让多个客户端程序使用一个idp就是单点登入
+
+登出：
+//客户端登出
+ await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+//idp登出
+ await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+注意括号里面要和这里的字符串一致
+
+ services.AddAuthentication(o=> {               
+                o.DefaultScheme=CookieAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+

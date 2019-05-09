@@ -1,0 +1,9 @@
+就是用一个对象接收数据，在变量名都一致的情况下怎么都绑定不到url上面的数据。。
+解决方案，在接受参数前面指明数据来源
+
+public async Task<IActionResult> Get([FromQuery]（就是这个）PostParameter postParameter)
+
+
+猜测，可能瘫痪了吧哈哈哈。。。。食品上面就可以我的就不行
+
+里面还有个fromform可能是给post用的

@@ -1,0 +1,32 @@
+读取链接字符串
+
+一 appsettings读取：
+1 注入读文件组件（创建webhost的时候就创建好了直接注入）
+
+     public class Startup
+    {
+        public static IConfiguration configuration { get;private set; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Startup.configuration = configuration;
+        }
+	
+	public void ConfigureServices(IServiceCollection services)
+        {
+            var connectionString = configuration["ConnectionStrings:xxxx"];
+            services.AddDbContext<MyContext>(o => o.UseSqlServer(connectionString));           
+            
+        }
+
+因为appsettings文件会暴露给访问的客户，导致数据库不安全，所以开发环境用appsettings，
+生产环境用系统变量
+
+环境变量添加：
+1 搜索框envi-环境变量-系统变量中新建
+注意系统变量的key要和appsettings中的写法一致，如 ConnectionStrings:xxxx
+
+2 读取的时候正常读取即可，configuration也可以读到系统变量 即
+ var connectionString = configuration["ConnectionStrings:xxxx"];
+
+注意！！！key一定要是  ConnectionStrings:xxxx 必须是这样

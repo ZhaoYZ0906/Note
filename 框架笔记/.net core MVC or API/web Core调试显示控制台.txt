@@ -1,0 +1,17 @@
+vs创建的项目调试的时候默认不出控制台
+
+dotnet创建的出
+
+将launchSettings里面删去iis的部分即可出现控制台，删除之后是
+{
+  "profiles": {
+    "BlogDemo.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    }
+  }
+}这个样子滴

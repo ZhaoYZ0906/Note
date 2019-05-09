@@ -1,0 +1,8 @@
+在不同的环境中使用不同的startup
+
+1 根据不同的环境编写好对应的startup{环境名}类
+  
+2 program中将.UseStartup<Startup>();
+改为.UseStartup(typeof(startup{环境名}).GetTypeInfo().Assembly.FullName);
+
+3 环境名（右键项目-属性-调试）要和startup{环境名}后缀相同

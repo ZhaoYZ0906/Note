@@ -1,0 +1,46 @@
+OIDC：一套身份认证程序
+
+身份认证：身份认证就是指它可以告诉应用程序当前的用户是谁, 还有这些用户是否正在使用你的应用程序. 
+它是一种安全架构, 它可以告诉你用户是他们所声明的身份, 
+通常呢, 是通过提供一套安全凭据(例如用户名和密码)给应用程序来证明这一点.
+
+OpenID Connect 基于 OAuth 2.0, 在此之上, 它添加了一些组件来提供身份认证的能力.
+
+OpenID Connect的官方定义是: OpenID Connect是建立在OAuth 2.0协议上的一个简单的身份标识层, 
+OpenID Connect 兼容 OAuth 2.0. 
+
+OAuth2.0与OIDC角色映射：
+
+OAuth2里可以分为两部分: 1.资源所有者/客户端应用, 2.授权服务器/被保护资源.
+身份认证协议里也是两大部分: 1.依赖方, 2.身份提供商.
+
+所以考虑这样映射:
+OAuth2里的授权服务器/被保护资源 ---- 身份认证协议里的身份提供商进行映射
+OAuth2里面的资源所有者 ---- 身份认证协议里的最终用户
+OAuth2的客户端应用 ---- 身份认证协议里的依赖方(RP).
+
+OIDC具体流程：
+
+1. 依赖发(RP)发送请求到OpenID提供商(OP, 也就是身份提供商).
+
+2. OpenID提供商验证最终用户的身份, 并获得了用户委派的授权
+
+3. OpenID提供商返回响应, 里面带着ID Token, 也通常带着Access Token.
+
+4. 依赖方现在可以使用Access Token发送请求到用户信息的端点.
+
+5. 用户信息端点返回用户的声明(claims, 相当于是用户的信息).
+
+身份认证方式：Authorization Code 流程, Implicit 流程, Hybrid 流程.
+具体看博客吧
+
+OAuth介绍了4种授权（可能一共有6种）：Authorization Code，Implicit， Resource Owner Password Credentials，Client Credentials
+OIDC一共有三种授权：Authorization Code Flow，Implicit Flow，Hybrid Flow
+
+对应关系：
+Authorization Code-Authorization Code Flow
+Implicit-Implicit Flow
+Hybrid Flow结合：Authorization Code Flow，Implicit Flow
+
+
+

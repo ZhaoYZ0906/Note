@@ -1,0 +1,2 @@
+不管是console/mvc/api本质上都是console所以启动顺序统一为：
+ main（主函数）-ConfigureServices（依赖注入）-Configure（中间件）

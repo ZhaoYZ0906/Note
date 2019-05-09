@@ -1,0 +1,135 @@
+客户端登陆时请求的token是存在过期时间的所以当token过期之后必须重新请求token
+
+API端口
+
+api端口可以设置每隔多少分钟检查一次访问者的token，对于过期的token不同意请求
+
+在具体的认证方案里面设置即可
+services.AddAuthentication("Bearer").AddJwtBearer("Bearer", o =>
+            {
+                o.Authority = "http://localhost:5000";
+                o.RequireHttpsMetadata = false;
+                o.Audience = "api1";
+                //设置每隔多少分钟检查一次token
+                o.TokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(1);
+                //token必须要有超时时间
+                o.TokenValidationParameters.RequireExpirationTime = true;
+            });
+
+idp端口：
+
+idp端口可以设置token的过期时间
+加上这句就行了
+ // MVC client using hybrid flow
+                new Client
+                {
+                    AccessTokenLifetime=60,//设置过期时间                    
+                   
+                },
+
+
+客户端：
+
+首先得先能请求道RefreshToken
+1 在依赖注入的： services.AddAuthentication（）.AddOpenIdConnect里面配置
+
+//请求RefreshToken，注释写的是什么脱机也能请求什么的。。。
+o.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
+
+2 查看RefreshToken
+
+ var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+
+3 写重新获取的方法：
+
+ //整个更新操作分3部分：1 重新请求token  2 重新请求身份认证 3 新的身份认证拿着新的token进行重新登陆
+        private async Task<string> RenewTokenAsync() {
+            //重新请求token
+            var client = new HttpClient();
+            var disco = await client.GetDiscoveryDocumentAsync("http://localhost:5000/");
+
+            //把现有的RefreshToken提取出来
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+
+            //重新获取token
+            var newtoken = await client.RequestRefreshTokenAsync(new RefreshTokenRequest {
+                Address= disco.TokenEndpoint,
+                ClientId = "MVC Client",
+                Scope= "api1 openid profile offline_access",
+                ClientSecret = "MVC client",
+                GrantType= OpenIdConnectGrantTypes.RefreshToken,
+                RefreshToken= refreshToken
+            });
+            //请求token完毕
+
+            //整理token
+            if (newtoken.IsError)
+            {
+                throw new Exception(newtoken.Error);
+            }
+           
+                var expirseAt = DateTime.UtcNow + TimeSpan.FromSeconds(newtoken.ExpiresIn);
+
+                var tokens = new[] {
+                    new AuthenticationToken{ Name=OpenIdConnectParameterNames.IdToken,Value=newtoken.IdentityToken},
+                    new AuthenticationToken{ Name=OpenIdConnectParameterNames.AccessToken,Value=newtoken.AccessToken },
+                    new AuthenticationToken{ Name=OpenIdConnectParameterNames.RefreshToken,Value=newtoken.RefreshToken},
+                    new AuthenticationToken{ Name="expires_at",Value=expirseAt.ToString("o",CultureInfo.InvariantCulture)},
+                };
+            //整理token完毕
+
+            //重新进行身份认证
+            var currentAuthenticationResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //将新的token给新的身份认证
+            currentAuthenticationResult.Properties.StoreTokens(tokens);
+
+            //新的身份认证拿着新的token进行重新登陆
+            await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme, 
+                    currentAuthenticationResult.Principal, 
+                    currentAuthenticationResult.Properties
+                    );
+
+            //返回新的token，供消费者使用
+            return newtoken.AccessToken;            
+        }
+
+
+4 在action中的正常请求结束后，判断请求是否正常，如果不正常则调用
+
+if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode==HttpStatusCode.Unauthorized)
+                {
+                    await RenewTokenAsync();
+                    return RedirectToAction();
+                }
+                throw new Exception();
+            }
+
+
+
+在identityserver4的github库中，有identityserver4.samples.clients.src里面有一些例子
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

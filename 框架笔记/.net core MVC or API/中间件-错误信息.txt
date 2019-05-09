@@ -11,3 +11,39 @@ app.UseStatusCodePages();-----//显示400-599的状态码
 app.UseDatabaseErrorPage();-----//这个什么都不显示
 
 app.UseExceptionHandler("/Home/Error");-----//到指定的页面这个页面在Shared文件夹中，也可以自定义一个
+
+
+
+自定义错误信息：
+
+协商这个类：
+public static void MyExceptionHandlerRun(this IApplicationBuilder app, ILoggerFactory loggerFactory) {
+
+            app.UseExceptionHandler(b => {
+                b.Run(async c => {
+
+		    //返回的状态码
+                    c.Response.StatusCode = StatusCodes.Status500InternalServerError;
+		    //返回数据类型
+                    c.Response.ContentType = "application/json";
+
+                    var e = c.Features.Get<IExceptionHandlerFeature>();
+
+		    //日志看情况使用/不使用
+                    if (e != null) {
+                        var log = loggerFactory.CreateLogger("MyExceptionHandlerRun");
+                        log.LogError(500, e.Error, e.Error.Message);
+                    }
+		    //将这些信息添加到respone
+                    await c.Response.WriteAsync(e?.Error?.Message ?? "不知道什么错");
+
+                });
+            });
+
+
+        }
+
+然后中间件引用：
+ app.MyExceptionHandlerRun(loggerFactory);
+
+完成！
