@@ -1,0 +1,106 @@
+angular访问core，core返回需要数据到angular
+因为angular与core之间，端口肯定不同（两个程序没法跑在一个端口上），协议可能相同（http/https），域名可能相同（因为可能跑在本地），所以angular与core之间肯定存在跨域访问。
+
+angular部分：
+
+发起请求。
+接受返回数据。
+处理和展示数据。（不作说明，视情况而定）
+
+发起请求：
+1 通过一个服务发起请求，所以创建服务！
+
+通过angular cli
+ng generate service <name> [options]
+有许多参数，详情见cli文档
+
+
+2 访问需要使用到httpclientmoduel，所以要在module中声明
+
+在app.module中声明HttpClientModule，并且在服务中使用
+imports：[HttpClientModule] 在里面加上即可
+
+
+3 在服务中写好访问API的方法
+
+  public 方法名(): Observable<返回类型> {
+    return this.httpClient.get/post/delete等<返回类型>('请求地址/api/具体api名称');
+  }
+
+地址示例：http://localhost:5001/api/todo
+
+
+4 在组件中调用写好的对象方法即可
+
+在app.module中进行依赖注入
+providers: [xxxService], 在里面加上即可
+
+在合适的动作里面进行访问：
+ngOnInit：当前组件初始化完成后调用，还有好多类似的动作。具体查看angular.js
+subscribe：回掉函数
+ngOnInit(): void {
+    this.xxxservice.getTodo().subscribe(todos => {
+      this.todos = todos;
+      console.log(this.todos);
+    });
+  }
+
+
+
+前端配置完成
+
+
+
+
+core部分：
+
+写好API
+配置跨域
+
+
+写好API：
+想要啥写啥
+
+
+配置跨域：
+在依赖注入里面添加跨域策略：
+services.AddCors(option=> {
+                option.AddPolicy("策略名", builder => {
+			builder.AllowAnyOrigi().//策略允许任何来源
+			AllowAnyHeader().//允许任何头
+			AllowAnyMethod().//允许访问任何控制器中的方法
+			WithExposedHeaders("MediaType名")//添加自定义的MediaType
+
+		});
+            });
+
+备注：这三个 允许任何 方法有三个对应的 允许指定 方法，在一个类中需要的时候可以看看
+      自定义MediaType详情见 .net core MVC与API -> api中的hateoas
+猜测：这个策略应该可以单独拿出来形成一个文件。
+
+跨域策略应用到全局（所有控制器）
+//注册全局策略（所有控制器的访问必须通过这些策略）（包括：跨域策略，认证策略和其他一些）
+services.Configure<MvcOptions>(option =>
+            {
+                //添加跨域策略。要在认证策略之前，添加的策略和配置的策略名称要一致
+                option.Filters.Add(new CorsAuthorizationFilterFactory("策略名"));
+
+            });
+
+添加中间件：app.UseCors("策略名");
+
+
+
+如果没有身份认证的话到这里前端应该可以访问后台了
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+1 下载node.js，然后安装（中间有一个选项记得选 addpath，其他都是下一步）
+
+2 配置文件：node.js安装完成后，node和npm命令就可以用，设置nom存储包的位置
+
+执行下面命令:
+npm config set prefix "D:\Program Files\nodejs\node_global"
+(这里有可能生成的文件叫node_globa，少个l手动改过来就行)
+npm config set cache "D:\Program Files\nodejs\node_cache"
+
+3 添加环境变量：在用户变量-path-加上node_global文件所在的地址
+比如：D:\nodejs\node_global\
+
+4 安装Anglura和TS
+
+先安装angular/cli：npm install -g @angular/cli
+安装ts命令忘了。。
+
+5 创建一个Anglura项目
+ng new blog-client --style scss --dry -run
+--dry 表示先显示出要创建哪些文件但是不创建
+--style scss使用scss文件格式
+
+ng new blog-client --style scss -run  创建
+
+6 坑来了。。
+1 创建完后后它会提醒：
+found 1 high severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+有一个高位错误使用npm audit fix修复
+
+2 执行npm audit fix
+报两个错误：
+npm ERR! code EAUDITNOPJSON
+npm ERR! audit No package.json found: Cannot audit a project without a package.json
+//没有project 文件
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     D:\nodejs\node_cache\_logs\2019-04-14T03_01_22_864Z-debug.log
+//这个不影响
+
+3 没有项目文件创建一个
+执行：npm init --yes
+
+4 再执行：npm audit fix
+
+然后它报一堆网络错误：
+npm ERR! code ETIMEDOUT
+npm ERR! errno ETIMEDOUT
+npm ERR! network request to https://registry.npmjs.org/-/npm/v1/security/audits failed, reason: connect ETIMEDOUT 104.16.25.35:443
+npm ERR! network This is a problem related to network connectivity.
+npm ERR! network In most cases you are behind a proxy or have bad network settings.
+npm ERR! network
+npm ERR! network If you are behind a proxy, please make sure that the
+npm ERR! network 'proxy' config is set properly.  See: 'npm help config'
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     D:\nodejs\node_cache\_logs\2019-04-14T03_05_16_467Z-debug.log
+
+执行：npm i --package-lock-only（下载一个包）
+      npm audit fix（完成修复）
+
+
+5 运行一下看看：ng serve -o
+出现一个大的anglura logo的网页就是ok了
+
+
+
+
+
+
+
+
+
+
+
+
+

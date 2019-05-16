@@ -1,0 +1,8 @@
+Authorization Code Flow：
+
+浏览器请求api（没有登陆）-》跳转到认证服务器-》认证服务器要求用户登陆-》用户输入账号密码登陆-》登陆成功-》认证服务器返回code码到浏览器（前端应用程序）-》前端应用程序用code去认证服务器请求accesstoken
+-》认证服务器验证code-》成功返回accesstoken-》前端应用程序拿着accesstoken去请求api
+
+Implicit Flow：
+
+浏览器请求api（没有登陆）-》跳转到认证服务器-》认证服务器要求用户登陆-》用户输入账号密码登陆-》登陆成功-》认证服务器返回access（前端应用程序）-》前端应用程序拿着accesstoken去请求api

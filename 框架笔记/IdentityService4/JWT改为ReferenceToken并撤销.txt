@@ -1,0 +1,124 @@
+JWT一般发送给客户端之后无法撤回，在使用JWT访问API的时候不需要与idp通信只需要在API验证JWT即可。
+ReferenceToken，发送给客户端之后有办法撤回，使用ReferenceToken访问API时先将ReferenceToken发送到IDP进行验证，并且将验证结果返回到API，然后API决定客户端可不可以访问
+
+ReferenceToken比较JWT的优势为安全性较高并且可以撤销，劣势为要和IDP多一次通信，所以一般在安全性较高的程序中使用
+
+更改过程（在hybridflow授权的基础之上）：
+
+1 更改token类型
+2 增加API使用的密令
+
+3 修改api的认证配置
+
+idp端：
+1 更改token类型
+ new Client{                   
+        AccessTokenType=AccessTokenType.Reference,//默认为jwt
+}
+
+2 增加API使用的密令
+public static IEnumerable<ApiResource> GetApis()
+        {
+            return new ApiResource[]
+            {
+                new ApiResource("api1", "My API #1"){
+                    ApiSecrets={new Secret("api1 secrets".Sha256()) }//加这句是给api端口用的
+                }
+            };
+        }
+
+
+3 修改api的认证配置
+
+本来配置为：
+            services.AddAuthentication("Bearer").
+            //.AddJwtBearer("Bearer", options =>
+            //{
+            //    options.Authority = "http://localhost:5000";
+            //    options.RequireHttpsMetadata = false;
+            //    options.Audience = "api1";
+            //});
+修改为：
+	     services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme).
+                AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = "http://localhost:5000";
+                options.ApiName = "api1";
+                options.RequireHttpsMetadata = false;
+                options.ApiSecret = "api1 secrets";
+            });
+IdentityServerAuthenticationDefaults.AuthenticationScheme在IdentityServer4.AccessTokenValidation包里面
+AddIdentityServerAuthentication在IdentityServer4.AccessTokenValidation包里面
+
+AddIdentityServerAuthentication是AddJwtBearer的封装，两个内容基本一致，但有一些名字不一样
+
+
+
+
+
+撤销ReferenceToken：
+
+在一个方法内：
+ var client = new HttpClient();
+            var disco = await client.GetDiscoveryDocumentAsync("http://localhost:5000/");
+            if (disco.IsError)
+            {
+                throw new Exception(disco.Error);
+            }
+
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                var revokeAccessTokenResponse = await client.RevokeTokenAsync(new TokenRevocationRequest
+                {
+                    Address = disco.RevocationEndpoint,
+                    ClientId = "hybrid client",
+                    ClientSecret = "hybrid secrest",
+                    Token = accessToken
+                });
+
+                if (revokeAccessTokenResponse.IsError)
+                {
+                    throw new Exception("Access Token Revocation Failed: " + revokeAccessTokenResponse.Error);
+                }
+            }
+
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+            if (!string.IsNullOrWhiteSpace(refreshToken))
+            {
+                var revokeRefreshTokenResponse = await client.RevokeTokenAsync(new TokenRevocationRequest
+                {
+                    Address = disco.RevocationEndpoint,
+                    ClientId = "hybrid client",
+                    ClientSecret = "hybrid secrest",
+                    Token = refreshToken
+                });
+
+                if (revokeRefreshTokenResponse.IsError)
+                {
+                    throw new Exception("Refresh Token Revocation Failed: " + revokeRefreshTokenResponse.Error);
+                }
+            }
+简单粗暴
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

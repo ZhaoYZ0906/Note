@@ -39,7 +39,6 @@ identityserver4端口：
 
 2 写好需要的api资源
 
-3 写好需要的identity资源
 
 
 mvc客户端：

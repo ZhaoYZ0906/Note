@@ -1,0 +1,43 @@
+模块文件（自己起的）：指app.module.ts这一类的文件
+
+//引用其他文件
+import { xxxModule } from 'xxx文件';
+
+//某块内的具体信息
+@NgModule({
+
+  //有哪些组件属于这一模块
+  declarations: [
+    AppComponent
+  ],
+
+  //引用了那些模块
+  imports: [   
+    xxxModule
+  ],
+
+  //依赖注入了哪些模块
+  providers: [TodoService],
+
+  //启动模块，这个好像只能有一个
+  bootstrap: [AppComponent]
+})
+
+//将当前模块暴露出去，供其他模块使用
+export class AppModule {}
+
+
+特别注释：
+imports:用于引用模块，并且把模块中标记 export 的类进行依赖注入
+providers: 用于引用类，并且将类进行依赖注入
+
+
+imports和providers中已经暴露的类都会自动进行依赖注入
+
+
+
+
+
+
+
+

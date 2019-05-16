@@ -1,0 +1,52 @@
+第一天
+
+
+
+
+core中：
+
+core与其他的主要区别在：在依赖注入的时候扩展包给做了一些其他的工作，比如初始化
+
+一个主包一个扩展包
+AutoMapper AutoMapper.Extensions.Microsoft.DependencyInjection
+
+依赖注入：
+services.AddAutoMapper(typeof(Startup));
+AddAutoMapper在实现注入的同时，读取项目中所有prifile文件并自动给自己配置
+
+
+services.AddAutoMapper(可以写程序集名称/配置文件类型);
+程序集名称写法猜测要使用反射
+配置文件直接typeof对应类即可，因为这里实在startup注入所以这样，应该还可以从startup中拿出，放到别的文件中
+
+profile：正常写即可，记住写配置的方法是类的构造函数，也有人说是configura但是不知道怎么用
+
+public class first : Profile
+    {
+        public first()
+        {
+            CreateMap<Source,Destination>();
+            CreateMap<Destination, Source>();
+        }
+    }
+
+正常用即可
+
+ Mapper.Map<Source, Destination>(source, destination);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

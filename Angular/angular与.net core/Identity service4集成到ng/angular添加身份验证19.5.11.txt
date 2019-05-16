@@ -1,0 +1,154 @@
+Identity service4（idp）集成到ng
+
+Identity service4属于ng和api的中间部分主要负责授权和身份验证。
+
+背景：首先需要一个可以连通的ng前端和api后端
+
+集成步骤：
+
+1.1 在idp里面添加 Implicit Flow 模式的客户端信息
+
+2.2 将API保护
+2.3 配置跨域
+
+3.1 安装oidc-client组件
+3.2 配置UserManager需要的参数
+3.3 写一个有关登入/登出/等操作的服务
+3.4 在页面上写一个登入按钮
+3.5 写idp需要的跳转页面，并且注册到路由
+3.6 添加一个拦截器
+
+
+
+具体实现：
+
+1.1  
+idp部分：添加一个客户端
+
+		// angular客户端配置 
+                new Client
+                {
+                    //和ng那个一致
+                    ClientId = "blog-client",
+                    ClientName = "Blog Client",
+                    //ng地址
+                    ClientUri = "http://localhost:4200",
+
+                    //服务器类型
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    //控制是否通过浏览器为此客户端传输访问令牌（默认值为false）。当允许多个响应类型时，这可以防止访问令牌的意外泄漏。
+                    AllowAccessTokensViaBrowser = true,
+                    //认证的时候弹出同意确认框
+                    RequireConsent=true,
+                    //accsee有效期 秒
+                    AccessTokenLifetime=180,
+
+                    RedirectUris =
+                    {//这两个地址就是前段步骤的第五步的地址
+                        "http://localhost:4200/signin-oidc",
+                        "http://localhost:4200/redirect-silentrenew"
+                    },
+
+                    //登出后跳转
+                    PostLogoutRedirectUris = { "http://localhost:4200/" },
+                    //允许浏览器客户端跨域的地址，所以idp也要配置跨域
+                    AllowedCorsOrigins = { "http://localhost:4200" },
+
+                    AllowedScopes = {//请求范围
+                    }
+                }
+
+
+api部分：
+
+2.1
+保护api：在需要保护的地方加[Authorize]
+
+2.2
+api跨域：见angular与core的访问
+
+
+
+前段部分：
+
+
+3.1
+安装oidc-client组件：npm install --save oidc-client //好像是这么写
+
+
+3.2
+配置UserManager需要的参数：
+UserManager需要在服务中用到，通过UserManager来进行用户的管理
+环境变量中：
+
+export const idpBase = 'http://localhost:5000';
+export const apiBase = 'http://localhost:5001';
+export const angularBase = 'http://localhost:4200';
+
+openIdConnectSettings: {
+    authority: `${idpBase}`,//认证地址
+    client_id: 'angular-client',//与idp一致
+    redirect_uri: `${angularBase}/signin-oidc`,/这个组件需要写
+    post_logout_redirec_uri: `${angularBase}/`,//登出重定向
+    silent_redirect_uri: `${angularBase}/redirect-silentrenew`,//这个组件需要写
+    scope: 'api1 openid profile',//范围
+    response_type: 'id_token token',//请求哪些令牌
+    automaticSilentRenew: true//如果登陆过期，则自动重新登陆
+  }
+};
+
+
+
+3.3
+写一个有关登入/登出/等操作的服务：
+oidc/open-id-connect.service
+什么时候学会了ng在想着自己写
+
+
+3.4
+在页面上写一个登入按钮
+	<button
+          mat-menu-item
+          *ngIf="!oidc.userAvailable"
+          (click)="oidc.triggerSingIn()"
+	>
+记得后台把oidc服务注入进来
+
+
+
+3.5
+写idp需要的跳转页面，并且注册到路由：
+redirect-silentrenew和signin-oidc文件夹里面的组件
+两个组件都是后台有一小段代码，不能缺少。
+记得注册到路由
+
+
+
+3.6
+添加一个拦截器
+authorization-header.interceptor这个文件就是
+拦截器：当网站发起一个请求的时候，必须通过拦截器，拦截器可以做一些相应的改动
+这里拦截器的主要工作是是tokentype和accesstoken加到请求里面，这样才能访问受保护的api
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

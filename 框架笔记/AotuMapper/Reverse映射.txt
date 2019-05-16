@@ -1,0 +1,14 @@
+Reverse映射：
+CreateMap<Reverse, ReverseDto>().ReverseMap();
+等价于
+CreateMap<Source,Destination>();
+CreateMap<Destination, Source>();    
+
+就是把两个createmap变成了一个。在最后加ReverseMap();
+
+正向与反向的属性指定：
+
+CreateMap<Reverse, ReverseDto>().
+                ForMember(正向目标=>正向目标.属性, r=>r.MapFrom(正向源=>正向源.属性)).//这里的r是选项/options但是为了指定属性必填
+                ReverseMap().
+                ForPath(反向目标=>反向目标.属性,dto=>dto.MapFrom(反向源=>反向源.属性));  //这里的d是选项     

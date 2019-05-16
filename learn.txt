@@ -1,15 +1,18 @@
 主要：
-1 杨旭-API入门-core2.1+ng6
+1 杨旭-API入门-core2.1+ng6---完成
+
 2 杨旭-常识-测试驱动开发
-2 杨旭-模块设计-缓存入门
+2 杨旭-模块设计-缓存入门-----滚去升级内存吧
+（p5为core做分布式缓存，学完之后回ASP.NET Core MVC 2.x 全面教程-p26完成分布式缓存部分）
 2 学习日志部分的学习材料
-2 杨旭-API中级-Identity server4
+2 杨旭-核心-Identity server4
+
 3 梁桐铭-ABP入门-core与ef的ABP入门教程（腾讯课堂）
 3 梁桐铭-ABP实战教程-52ABP与angular快速开发（网易云）
 
 次要：
 学习mysql和mysql与core的对接
-了解vue
+了解angular
 学习一下更多的orm
 尝试学习服务器方面的知识
 

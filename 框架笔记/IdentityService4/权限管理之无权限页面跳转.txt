@@ -1,0 +1,10 @@
+当用户想要访问某个被权限控制的页面时，会产生两种情况：
+有权限-》顺利访问；
+无权限=》跳转到某个界面
+
+当无权限时页面跳转设置：
+在客户端 
+services.AddAuthentication（） .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,option=> {
+                    //没有权限时候的跳转地址 写一个可以访问到的页面
+                    option.AccessDeniedPath = "/Authorization/AccessDenied";
+                })

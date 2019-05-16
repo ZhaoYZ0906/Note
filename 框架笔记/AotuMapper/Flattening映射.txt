@@ -1,0 +1,29 @@
+aotumapper是根据属性名称进行匹配映射的。
+除此之外，默认的映射规则还有下面两种情况，扁平化（Flattening）映射，
+
+即当源类中不包含目标类中的属性的时候，1 AutoMapper在源类中包含的类进行搜索，2 或匹配“Get”开头的方法
+
+
+清单类包含：客户类（Customer），商品行类集合（_orderLineItems），并且有计算所有商品方法（GetTotal），添加商品行方法（AddOrderLineItem）
+
+顾客类：姓名（name）
+
+商品行类：商品类，当前商品总价
+
+商品类：名称（CustomerName），单价
+
+
+目标类：客户名称（CustomerName），所有商品总价（Total）
+
+
+1 规则：因为源类中不存在CustomerName属性，则搜索包含的类 存在Customer，并且存在name属性
+
+目标类CustomerName=Customer+name。 所以Customer.name属性映射到CustomerName
+
+2 规则：当所有完包含的类的时候，仍得不到匹配结果，则匹配get+属性名的方法
+
+目标类：Total-》匹配不到，则匹配getTotal（）。匹配成功-》将getTotal（）返回值映射到Total
+
+
+可能记的不是很明白，不如看代码！
+

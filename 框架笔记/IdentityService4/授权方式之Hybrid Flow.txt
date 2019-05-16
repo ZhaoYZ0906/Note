@@ -1,0 +1,155 @@
+Hybrid Flow属于Implicit Flow与Authorization Code的混合版
+基本上可以适用在除服务器对服务器之间的所有情况
+
+1 保护api
+2 配置api的认证
+
+3 配置idp
+
+4 配置授权与登陆
+5 获取accesstoken
+6 访问api
+
+
+API部分：
+1 保护api：加[Authorize]即可
+2 配置api认证：
+依赖注入
+services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+
+                    options.Audience = "api1";
+                });
+
+全局策略
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AngularClientOrigin"));
+            });
+
+中间件
+app.UseAuthentication();
+别忘了配置跨域
+
+3 配置idp
+
+写个客户端配置：想要啥就写啥
+new Client{
+                    ClientId="hybrid client",//客户端要用
+                    ClientName="hybrid client",
+                    AllowedGrantTypes=GrantTypes.Hybrid,
+                   
+                    ClientSecrets={ new Secret ("hybrid secrest".Sha256()) },//客户端要用
+
+                    RedirectUris={
+                        "http://localhost:7000/signin-oidc"
+                    },
+
+                    PostLogoutRedirectUris={
+                       " http://localhost:7000/signout-callback-oidc "
+                    },
+
+                    AllowOfflineAccess=true,
+
+                    AlwaysIncludeUserClaimsInIdToken=true,
+
+                    AllowedScopes={
+                        "api1",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Address,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        IdentityServerConstants.StandardScopes.Profile
+                    }                    
+                }
+
+
+
+客户端部分
+
+4 配置授权与登陆
+
+ //如果不加这句则请求到的相关角色信息名会变成一些http地址来显示，加上比较容易看是什么属性
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+                {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.ClientId = "hybrid client";
+                    options.ClientSecret = "hybrid secrest";
+                    options.SaveTokens = true;
+                    options.ResponseType = "code id_token";
+
+                    options.Scope.Clear();
+                    //需要请求的东西
+                    options.Scope.Add("api1");
+                    options.Scope.Add(OidcConstants.StandardScopes.OpenId);
+                    options.Scope.Add(OidcConstants.StandardScopes.Profile);
+                    options.Scope.Add(OidcConstants.StandardScopes.Email);
+                    options.Scope.Add(OidcConstants.StandardScopes.Phone);
+                    options.Scope.Add(OidcConstants.StandardScopes.Address);
+                    options.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
+
+                    //UseAuthentication()中间件中会自动给自动过滤掉一部分claims属性，如果某些属性不想被过滤掉可以：
+                    //所有要过滤掉的元素都在ClaimActions中，所以我们不想被过滤的属性从ClaimActions中移除即可
+                    options.ClaimActions.Remove("nbf");
+                    options.ClaimActions.Remove("amr");
+                    options.ClaimActions.Remove("exp");
+
+                    //假如我们想过滤掉某个属性但是ClaimActions中没有则可以：
+                    //ClaimActions中有add方法和这个方法效果一直不过这个使用string比较方便
+                    //方法命名有点混乱  DeleteClaim我们想删除哪个  add将哪个添加到删除的集合 Remove将哪个从删除的集合中移除
+                    options.ClaimActions.DeleteClaim("sid");
+                    options.ClaimActions.DeleteClaim("sub");
+                    options.ClaimActions.DeleteClaim("idp");
+                });
+
+
+app.UseAuthentication();//写cook策略前面
+
+
+5 获取accesstoken/使用RefreshToken刷新accesstoken
+id4-Authorization Code Flow-》home控制器
+
+6 访问api
+5文件里面也有
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

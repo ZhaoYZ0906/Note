@@ -1,0 +1,34 @@
+IList,IQeurable,IEnumble和List　的区别主要如下:
+
+1.IList（IList<T>）会立即在内存里创建持久数据，这就没有实现“延期执行（deferred execution）”，
+而是一次性将数据加载进来,如果被加载的实体有关联实体（associations），此关联实体不会被加载
+（既不立即加载，也不延迟加载）
+
+2.IQeurable（IQuerable<T>）不会立即在内存里创建持久数据，只有遍历它（如通过foreach）、
+把它转换成List等情况下才会向内存加载数据，它可以实现“延期执行”，如果当前被加载的实体有关联实体
+（associations），此关联实体可被接下来的访问加载。在每次执行时都必须连接数据库读取，
+而IList读取一次后，以后各次都不需连接数据库。IQeurable 很容易造成重复读取，性能低下，
+并且可能引发数据不一致性
+
+3.IEnumberalb使用的是LINQ to Object方式，它会将AsEnumerable()时对应的所有记录都先加载到内存，
+然后在此基础上再执行后来的Query。
+
+4.List <>是泛型类,它已经实现了IList <>定义的那些方法,IList<T> list=new List<T>();
+只是想创建一个基于接口IList<Class1>的对象的实例，这个接口是由List<T>实现的。
+只是希望使用到IList<T>接口规定的功能而已
+
+ 
+
+总结:
+
+基于性能和数据一致性这两点，使用IQueryable时必须谨慎，而在大多数情况下我们应使用IList。
+
+当你打算马上使用查询后的结果(比如循环作逻辑处理或者填充到一个table/grid中)，
+并且你不介意该查询即时被执行后的结果可以供调用者(Consummer)作后续查询(比如这是一个"GetAll"的方法)，
+或者你希望该查执行，使用ToList()
+
+当你希望查询后的结果可以供调用者(Consummer)作后续查询(比如这是一个"GetAll"的方法)，
+或者你希望该查询延时执行，使用AsQueryable()
+
+按照功能由低到高：List<T> IList<T>  IQueryable<T> IEnumerable<T>
+按照性能由低到高：IEnumerable<T> IQueryable<T> IList<T>  List<T>

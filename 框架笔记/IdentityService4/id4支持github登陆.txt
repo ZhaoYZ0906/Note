@@ -1,0 +1,16 @@
+环境：在一个能正常id4登入授权的系统当中（客户端，idp，api）
+1 安装AspNet.Security.OAuth.GitHub包
+2 依赖注入配置：
+ services.AddAuthentication()
+  .AddGitHub(options=> { options.SignInScheme = 		    IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.ClientId = "93a11021bbd7ce0f1fe7";//github配置完才知道
+                    options.ClientSecret = "c5c0433a1d9f682ec346058ae11808d5e9dbe7fd";//github配置完才知道
+                    options.Scope.Add("user:email");//请求的额外scope
+                });
+
+3 配置github
+账户图标-》setting-》developer setting-》new oauth app
+
+4 填写名称，homeurl（idp的地址）,备注，认证地址（ipd地址/signin-github）点创建就ok了
+
+5 在跳转的页面复制ClientId/ClientSecret，填到依赖注入的配置里面

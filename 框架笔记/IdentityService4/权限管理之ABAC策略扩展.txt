@@ -1,0 +1,100 @@
+基于ABAC的权限管理一定会用到策略（policy），
+如果策略较多或者已有的策略方法已经不满足需求，则可以自己写策略扩展
+
+策略扩展主要关系到两个类/接口
+IAuthorizationRequirement---负责存储策略需要的属性等
+AuthorizationHandler<IAuthorizationRequirement继承类>---负责对策略的验证逻辑
+
+1 书写IAuthorizationRequirement继承类
+2 书写AuthorizationHandler<IAuthorizationRequirement继承类>继承类
+3 依赖注入
+
+
+1 书写IAuthorizationRequirement继承类
+    public class ARequire : IAuthorizationRequirement
+    {
+
+        public ARequire()
+        {
+        }
+    }
+
+通过构造函数可以对某些数据进行存储
+
+
+2 书写AuthorizationHandler<IAuthorizationRequirement继承类>继承类
+public class AHandler : AuthorizationHandler<ARequire>
+    {
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ARequire requirement)
+        {//具体逻辑
+            var FamilyName = context.User.Claims.FirstOrDefault(x=> (x.Type == JwtClaimTypes.FamilyName) )?.Value;
+            var Location = context.User.Claims.FirstOrDefault(x => x.Type == "location")?.Value;
+
+            if (FamilyName== "Smith" && Location== "somewhere" && context.User.Identity.IsAuthenticated)
+            {
+                context.Succeed(requirement);
+                return Task.CompletedTask;
+            }            
+
+            context.Fail();
+            return Task.CompletedTask;
+        }
+    }
+
+注意 requirement这个类就是1的实例化，并且可以通过requirement使用实例化时通过构造函数存储的数据
+已经实验过
+
+
+3 依赖注入
+
+            services.AddAuthorization(option=> {
+                option.AddPolicy("A", builder => {
+                    builder.AddRequirements(new ARequire());
+			//1的实例化 可以在这里将数据通过构造函数传入
+                });
+            });
+
+            services.AddSingleton<IAuthorizationHandler, AHandler>();
+
+
+
+总结：
+
+IAuthorizationRequirement---相当于策略本身，但是不包含验证逻辑
+AuthorizationHandler<IAuthorizationRequirement继承类>---相当与有关策略的验证器
+
+一个策略类可以有多个验证器，只需要将将验证器全部注入即可
+
+context.Succeed(requirement)与context.Fail()/return Task.CompletedTask;
+当一个策略有多个验证器时
+验证时必须至少有一个返回成功，其余的没有失败，则验证通过，否则验证不通过
+举例：
+一个成功，2个什么都返回（验证器里面没有触发context.Succeed(requirement)与context.Fail()）则验证成功
+3个什么都没返回，则验证失败
+2个成功1一个失败，则验证失败
+
+验证器的返回值一般都为 return Task.CompletedTask 表示线程工作完成，与验证结果无关
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+第一天
+
+
+
+
+如果系统不存在依赖注入则只需要安装AutoMapper包，如果存在看core的使用
+
+2选1
+
+1 首先初始化并且创建映射关系：
+Mapper.Initialize(cfg=> { 
+	   cfg.CreateMap<Source,Destination>(); 
+	});
+
+2 将映射关系写成一个文件
+ Mapper.Initialize(cfg => {
+                cfg.AddProfile<first>(); 
+                cfg.AddProfile<second>(); 
+                });
+
+映射关系文件：写在构造函数中，有人说重写configuar，但是没找到
+public class first : Profile
+    {
+        public first()
+        {
+            CreateMap< Source, Destination>();
+            CreateMap< Destination, Source>();
+        }
+    }
+
+正常用即可
+
+ Mapper.Map<Source, Destination>(source, destination);
+

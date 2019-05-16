@@ -1,0 +1,57 @@
+ABAC(Attribute-based Access Control)也叫PBAC(Policy-based Access Control)：基于策略的权限管理
+
+1 idp添加策略相关的用户资源
+2 idp设置客户端可以请求到相关用户资源
+
+3 客户端请求相关用户资源
+4 写一个策略
+5 使用策略控制页面
+
+
+1 idp返回策略相关的用户资源
+public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new IdentityResource[]
+            {
+                //roles资源名称/scope名称，下面客户请求的时候用（类似于api1）
+                //角色 显示名称随便写
+                //new List<string>{ "role"} claimtype指具体资源的名字  比如：new Claim(JwtClaimTypes.Role,"wbb")
+                new IdentityResource("locations","地址",new List<string>{ "location"})
+            };
+        }
+
+2 idp设置客户端可以请求到相关用户资源
+
+new Client{
+                    AllowedScopes={
+                        "locations",
+                    }                    
+                }
+
+
+3 客户端请求相关用户资源
+
+ services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+                {
+
+                    options.Scope.Add("locations");
+		}
+
+4 写一个策略
+
+            services.AddAuthorization(option=> {
+                option.AddPolicy("名称", builder => {
+                    builder.RequireAuthenticatedUser();//必须登陆
+                    builder.RequireClaim(JwtClaimTypes.FamilyName,"Smith");
+                    builder.RequireClaim("location", "somewhere");//location必须为somewhere
+                });
+            });
+5 使用策略控制页面
+[Authorize(Policy ="A")]
+
+注意当一个页面被多个策略同时控制的时候，只有所有的策略都符合才能访问

@@ -1,0 +1,226 @@
+1 先设置跨域访问，看ng跨域访问API，安装一个包：npm install oidc-client --save  必须装
+
+2 因为用到的文件较多，找个地方建立oidc文件夹（一般在shader下）
+
+3 建立一个服务，主要负责：检查是否登陆，返回登陆对象，出发登陆页面，登陆的回调函数，登出之后的操作等
+ng g s export  OpenIdConnect
+里面的方法见文件
+
+4 在environment中添加参数让OpenIdConnect使用：
+openIdConnectSettings: {
+    authority: 'https://localhost:5001/',
+    client_id: 'blog-client',
+    //成功之后跳转
+    redirect_uri: 'http://localhost:4200/signin-oidc',
+    //请求范围，要和idp端一致
+    scope: 'openid profile email restapi',
+    //请求的token
+    response_type: 'id_token token',
+    //登出之后
+    post_logout_redirect_uri: 'http://localhost:4200/',
+    //是否可一重新获取token
+    automaticSilentRenew: true,
+    silent_redirect_uri: 'http://localhost:4200/redirect-silentrenew'
+  }
+
+5 进行identityservice端的配置：
+  在config文件中：
+
+		// angular客户端配置  SPA client using implicit flow
+                new Client
+                {
+                    //和ng那个一致
+                    ClientId = "blog-client",
+                    ClientName = "Blog Client",
+                    //ng地址
+                    ClientUri = "http://localhost:4200",
+
+                    //服务器类型
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    //控制是否通过浏览器为此客户端传输访问令牌（默认值为false）。当允许多个响应类型时，这可以防止访问令牌的意外泄漏。
+                    AllowAccessTokensViaBrowser = true,
+                    //认证的时候弹出同意确认框
+                    RequireConsent=true,
+                    //accsee有效期 秒
+                    AccessTokenLifetime=180,
+
+                    RedirectUris =
+                    {
+                        "http://localhost:4200/signin-oidc",
+                        "http://localhost:4200/redirect-silentrenew"
+                    },
+
+                    //登出后跳转
+                    PostLogoutRedirectUris = { "http://localhost:4200/" },
+                    //允许浏览器客户端跨域的地址，所以idp也要配置跨域
+                    AllowedCorsOrigins = { "http://localhost:4200" },
+
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "restapi"
+                    }
+                }
+关于identityservice4之后会一系列笔记
+
+6 identityservice4配置跨域，因为认证的时候要用
+
+都尽量往前写
+
+依赖注入：
+	//配置跨域策略
+            services.AddCors(options =>
+            {
+                //名字随便起
+                options.AddPolicy("AngularDev",
+                    //允许4200的跨域
+                    policy => policy.WithOrigins("http://localhost:4200")                       
+                        //允许header
+                        .AllowAnyHeader()
+                        //允许method
+                        .AllowAnyMethod());
+            });
+
+中间件：
+app.UseCors();
+
+
+7 添加登陆和刷新token页面（redirect-silent-renew和signin-oidc）
+这俩文件夹直接复制进去就行，里面就是对用户登陆进行判定和OpenIdConnect中的回调函数
+在module中进行注册：
+declarations: [
+    AppComponent,
+	//添加
+    RedirectSilentRenewComponent,
+	//添加
+    SigninOidcComponent
+  ],
+配置路由：（这个和上面的注册都是在一个xx.module.ts文件中）
+  { path: 'signin-oidc', component: SigninOidcComponent },
+  { path: 'redirect-silentrenew', component: RedirectSilentRenewComponent },
+
+
+
+8 添加require-authenticated-user-route.guard文件
+使用 ng generate guard xxx/oidc/RequireAuthenticatedUserRoute --spec false
+里面只有一个方法，返回ture表示有权限 false表示没有权限，具体逻辑不清楚。。。
+
+进行注册，在当前模块的xx.module.ts中
+providers: [RequireAuthenticatedUserRouteGuard]
+
+9 配置路由
+
+guard文件是为了检查当前用户是否有权限，把他加到route当中，则有权限执行此路由没有权限则返回到登陆/其他
+在想要检查的路由中添加：
+
+const routes: Routes = [
+  {
+    path: '',
+    component: BlogAppComponent,
+    children: [
+      {
+        path: 'post-list',
+        component: PostListComponent,
+	//加了这个
+        canActivate: [RequireAuthenticatedUserRouteGuard]
+      },
+      { path: '**', redirectTo: 'post-list' }
+    ]
+  }
+];
+
+至此可以使用identityservice4进行登陆
+
+
+
+访问保护API（怎么保护api看后面identityservice4的笔记）
+10 建立拦截器，当用户登陆的时候展示请求的数据
+个人理解为拦截器是在请求发出之后接收到api返回的数据之后起作用
+guard文件实在访问路由之前起作用
+
+自己建立一个ts文件叫 authorization-header-interceptor.interceptor
+
+配置拦截器：
+
+哪一个module要用，就在xx.module.ts文件中配置
+
+providers: [
+    PostService,
+    //添加了这些
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthorizationHeaderInterceptor（拦截器的类）,
+      multi: true
+    }
+  ]
+
+至此结束
+
+
+
+
+
+理解：具体逻辑我也不知道，我也不敢问。。
+
+不过所有的文件 
+
+组件：ng g c xx  这种要在上一级的xxx.module.ts的declarations中声明，比如一下
+declarations: [
+    AppComponent,
+    RedirectSilentRenewComponent,
+    SigninOidcComponent
+  ],
+
+服务： ng g s xx 这种文件一般是一些逻辑代码，假如某个模块要用，则在对应模块的providers中写入
+providers: [RequireAuthenticatedUserRouteGuard, OpenIdConnectService],
+providers应该是依赖注入，在要用的组件当中通过构造函数注入即可：
+
+//这个方法是构造函数，通过这里注入即可
+constructor(
+    private openIdConnectService: OpenIdConnectService,
+    private router: Router
+  ) {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

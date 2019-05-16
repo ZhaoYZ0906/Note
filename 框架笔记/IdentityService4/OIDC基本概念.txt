@@ -38,8 +38,8 @@ OAuth介绍了4种授权（可能一共有6种）：Authorization Code，Implicit， Resource Own
 OIDC一共有三种授权：Authorization Code Flow，Implicit Flow，Hybrid Flow
 
 对应关系：
-Authorization Code-Authorization Code Flow
-Implicit-Implicit Flow
+Authorization Code - Authorization Code Flow
+Implicit - Implicit Flow
 Hybrid Flow结合：Authorization Code Flow，Implicit Flow
 
 
