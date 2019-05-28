@@ -1,0 +1,48 @@
+当映射过程中需要进行类型转换的时候适合用映射器
+
+1 定义接口
+2 实现接口
+3 创建映射关系
+4 使用
+
+1 定义接口
+public interface ITypeConverter<in TSource, TDestination>
+    {
+        TDestination Convert(TSource source, TDestination destination, ResolutionContext context);
+    }
+
+2 实现接口
+public class DateTimeTypeConverter : ITypeConverter<string, DateTime>
+    {
+        public DateTime Convert(string source, DateTime destination, AutoMapper.ResolutionContext context)
+        {
+            return System.Convert.ToDateTime(source);
+        }
+    }
+
+3 创建映射关系
+//创建关于string到datetime的映射关系
+CreateMap<string, DateTime>().ConvertUsing(new DateTimeTypeConverter().Convert);
+//创建映射关系
+CreateMap<Source, Destination>();
+
+4 使用
+CustomDTO result = mapper.Map<Custom, CustomDTO>(custom);
+
+
+补充：假如转换关系不算发杂的话可以这样，这样不需要写/实现接口
+第三步改为：
+ CreateMap<string, int>().ConvertUsing(s => Convert.ToInt32(s));
+
+
+
+
+自定义解析器和这个类似只不过把实现接口中的具体转换变为具体计算，可以看文档
+
+
+
+
+
+
+
+

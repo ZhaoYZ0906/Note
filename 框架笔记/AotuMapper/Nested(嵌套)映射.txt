@@ -1,0 +1,38 @@
+当a包含a1，b包含b1时我们想吧a映射到b。框架默认使用展平映射，如果我们想保留层次结果的话可以将包含类的映射关系也写进去（重点），这样就能保留映射前的层次结构。
+
+a和a1：
+public class OuterSource
+{
+	public int Value { get; set; }
+	public InnerSource Inner { get; set; }
+}
+
+public class InnerSource
+{
+	public int OtherValue { get; set; }
+}
+
+b和b1：
+public class OuterDest
+{
+	public int Value { get; set; }
+	public InnerDest Inner { get; set; }
+}
+
+public class InnerDest
+{
+	public int OtherValue { get; set; }
+}
+
+
+创建映射：
+    cfg.CreateMap<OuterSource, OuterDest>();
+    cfg.CreateMap<InnerSource, InnerDest>();
+
+使用：mapper.Map<OuterSource, OuterDest>(source);
+
+可以保留层次结构
+创建映射时的顺序不影响映射
+调用Map不需要指定任何内部类型映射
+
+

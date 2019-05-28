@@ -1,0 +1,5 @@
+Projection（投影）映射：指定dto的某个属性来自entity的某个属性
+
+ CreateMap<CalendarEvent, CalendarEventForm>().
+                ForMember(o => o.EventDate, opt => opt.MapFrom(src => src.Date.Date))
+制定CalendarEventForm>的EventDate来自CalendarEvent的Date.Date

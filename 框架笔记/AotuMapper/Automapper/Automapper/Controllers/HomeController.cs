@@ -58,7 +58,7 @@ namespace Automapper.Controllers
 
 
             //Reverse（反向）测试
-            var reverse = new Reverse() {
+            /*var reverse = new Reverse() {
                 Total=12.31M,                
             };
             reverse.customer = new Reverse_Customer() {
@@ -71,8 +71,34 @@ namespace Automapper.Controllers
             reversedto.CustomerName = "wbb";
 
             mapper.Map(reversedto,reverse);
+            */
 
 
+            //Projection(投影映射)
+            /*var calendarEvent = new CalendarEvent
+            {
+                Date = new DateTime(2008, 12, 15, 20, 30, 0),
+                Title = "Company Holiday Party"
+            };
+
+            var result=mapper.Map<CalendarEvent, CalendarEventForm>(calendarEvent);
+            */
+
+            //自定义映射
+            /*
+            var custom = new Custom
+            {
+                Value1 = "5",
+                Value2 = "01/01/2000",
+                Value3 = "AutoMapperSamples.GlobalTypeConverters.GlobalTypeConverters+Destination"
+            };
+
+            CustomDTO result = mapper.Map<Custom, CustomDTO>(custom);
+            */
+
+            //空替换
+            var nullreplace = new nullreplace();
+            nullreplaceDTO dTO = mapper.Map<nullreplace, nullreplaceDTO>(nullreplace);
 
             return View();
         }

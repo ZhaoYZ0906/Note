@@ -1,0 +1,14 @@
+var dest = Mapper.Map<Source, Dest>(
+source, 
+opt => opt.ConfigureMap().ForMember(
+	dest => dest.Value, m => m.MapFrom(src => src.Value + 10)
+	)
+);
+
+就是把profile里面的东西拿出来了，不建议这样做
+
+关闭内联验证：
+Mapper.Initialize(cfg => cfg.ValidateInlineMaps = false);
+
+禁用内联映射：
+Mapper.Initialize(cfg => cfg.CreateMissingTypeMaps = false);

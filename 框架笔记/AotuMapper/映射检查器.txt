@@ -1,0 +1,2 @@
+映射检查器：当映射关系过多时，不方便检查时使用，可以提供详细的信息
+Mapper.Configuration.AssertConfigurationIsValid();

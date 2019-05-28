@@ -1,0 +1,3 @@
+映射关系：
+            CreateMap<nullreplace, nullreplaceDTO>().
+                ForMember(dto=>dto.str,source=> { source.NullSubstitute(当源为空时替换的值); });

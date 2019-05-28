@@ -1,0 +1,7 @@
+Mapper.Initialize(cfg =>
+  cfg.CreateMap<Source, Destination>()
+	.ForMember(dest => dest.SomeValuefff, opt => opt.Ignore())
+);
+
+在文档配置验证里面。
+感觉这个没啥用，因为投影映射可以替代

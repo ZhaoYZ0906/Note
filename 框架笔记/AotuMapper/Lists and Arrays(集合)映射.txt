@@ -1,0 +1,51 @@
+public class Source
+{
+	public int Value { get; set; }
+}
+
+public class Destination
+{
+	public int Value { get; set; }
+}
+
+
+Mapper.Initialize(cfg => cfg.CreateMap<Source, Destination>());
+
+var sources = new[]
+	{
+		new Source { Value = 5 },
+		new Source { Value = 6 },
+		new Source { Value = 7 }
+	};
+
+IEnumerable<Destination> ienumerableDest = Mapper.Map<Source[], IEnumerable<Destination>>(sources);
+ICollection<Destination> icollectionDest = Mapper.Map<Source[], ICollection<Destination>>(sources);
+IList<Destination> ilistDest = Mapper.Map<Source[], IList<Destination>>(sources);
+List<Destination> listDest = Mapper.Map<Source[], List<Destination>>(sources);
+Destination[] arrayDest = Mapper.Map<Source[], Destination[]>(sources);
+
+不许要写特定的数组之间的映射关系，只需要写成员的映射关系即可
+
+
+空处理：
+
+Mapper.Initialize(cfg => {
+    cfg.AllowNullCollections = true;//开启空处理
+    cfg.CreateMap<Source, Destination>();
+});
+
+当源类为null时，AutoMapper会将目标字段映射到空集合，而不是将目标值设置为null。
+好像是实例化一个成员映射过去，但是成员内的属性为默认值
+
+
+多态处理：
+
+Mapper.Initialize(c=> {
+    c.CreateMap<ParentSource, ParentDestination>()
+	     .Include<ChildSource, ChildDestination>();
+    c.CreateMap<ChildSource, ChildDestination>();
+});
+
+将子类的映射关系包含到父类中
+
+
