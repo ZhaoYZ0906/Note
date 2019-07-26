@@ -1,0 +1,55 @@
+初始化器：
+构造函数之后进行属性初始化
+A a=new A（）{a1=1，a2=2}（这个是初始化器）；
+
+
+this：
+调用自己东西的时候使用
+静态不可以使用this
+
+例如：this.a
+
+
+propertyies（属性）
+属性比较字段多了{get；set；}
+get读取
+set赋值
+一般属性有一个对应的字段
+
+privatie int a；
+public A{get{return a}；set{a=value}；}
+
+只有get的话为只读属性
+也可以
+get=》a；set=》a=value
+
+
+自动属性
+public int A{get；set；}
+系统会生成一个对应字段‘A’来存储A的数据
+
+自动属性初始化
+public int A{get；set；}=100
+
+
+索引器
+string s=‘hello’
+使用：s[0]
+
+实现索引器
+
+https://www.cnblogs.com/lxblog/p/3940261.html
+看博客好吧
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+string通过索引只能读不能写
+比如 
+ss=str【1】正确
+str【1】=‘s’错误
+
+假如字符串反转建议：
+var array= str.ToCharArray();
+Array.Reverse(array,0,array.Length);
+new String(array);
+
+字符串转换为char数组
+数组使用reverse进行转换
+将转换后的数组重新生成一个字符串

@@ -37,28 +37,23 @@ Fatal, Ïàµ±ÑÏÖØ£¬¿ÉÒÔ¿Ï¶¨ÕâÖÖ´íÎóÒÑ¾­ÎŞ·¨ĞŞ¸´£¬²¢ÇÒÈç¹ûÏµÍ³¼ÌĞøÔËĞĞÏÂÈ¥µÄ»°ºó¹ûÑ
 3 mainº¯ÊıÖĞÌí¼Ólog
 
                 Log.Logger = new LoggerConfiguration()
-
                 //Ä¬ÈÏ×îĞ¡¼ÇÂ¼¼¶±ğ
-
                 .MinimumLevel.Debug()
+
                 //Èç¹ûÓöµ½MicrosoftÃüÃû¿Õ¼ä£¬ÄÇÃ´×îĞ¡¼ÇÂ¼¼¶±ğÎªInformation
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
 
                 //Í¨¹ıÉÏÏÂÎÄ¼ÇÂ¼ÆäËûĞÅÏ¢£¨¾ßÌåÊ²Ã´²»ÖªµÀ¡£¡££©
-
                 .Enrich.FromLogContext()
 
                 //Ğ´µ½¿ØÖÆÌ¨ ¼ÇµÃ°²×°sink
-
                 .WriteTo.Console()
 
                 //Ğ´µ½ÎÄ¼ş£¬Éú³ÉÎÄ¼şµÄ¼ä¸ô
  ¼ÇµÃ°²×°sink  Path.Combine½«Á½¸ö×Ö·û´®Á´½ÓÎªÒ»¸öÂ·¾¶
-
                 .WriteTo.File(Path.Combine( "logs","log.txt"), rollingInterval: RollingInterval.Day)
 
                 //´´½¨Õâ¸ölog
-
                 .CreateLogger();
 
 4 ÔÚmainº¯ÊıµÄÏÂÃæÌí¼Ó
@@ -66,7 +61,7 @@ Fatal, Ïàµ±ÑÏÖØ£¬¿ÉÒÔ¿Ï¶¨ÕâÖÖ´íÎóÒÑ¾­ÎŞ·¨ĞŞ¸´£¬²¢ÇÒÈç¹ûÏµÍ³¼ÌĞøÔËĞĞÏÂÈ¥µÄ»°ºó¹ûÑ
 
             WebHost.CreateDefaultBuilder(args)
 
-                //Ìí¼ÓÕâÒ»¾ä
+                //Ìí¼ÓÕâÒ»¾ä ĞèÒªSerilog.AspNetCore
         	.UseSerilog()
 
                 .UseStartup<Startup>();
@@ -74,20 +69,52 @@ Fatal, Ïàµ±ÑÏÖØ£¬¿ÉÒÔ¿Ï¶¨ÕâÖÖ´íÎóÒÑ¾­ÎŞ·¨ĞŞ¸´£¬²¢ÇÒÈç¹ûÏµÍ³¼ÌĞøÔËĞĞÏÂÈ¥µÄ»°ºó¹ûÑ
 5 Ê¹ÓÃµÄÊ±ºòºÍÄÚÖÃµÄÊ¹ÓÃ·½·¨Ò»ÖÂ
 
 
-6 ÅäÖÃĞÅÏ¢
-  appsettingsÖĞÓĞÒ»²¿·ÖloggingµÄ´æ·ÅlogµÄĞÅÏ¢£¬Í¨¹ıÕı³£µÄ×Ö·û´®¶ÁÈ¡¼´¿ÉµÃµ½
+
+
+¶ÁÈ¡ÅäÖÃÎÄ¼şĞ´·¨£º
+ÅäÖÃÎÄ¼ş£º
+  "Serilog": {
+      "MinimumLevel": {
+        "Default": "Debug",
+        "Override": {
+          "Microsoft": "Information"
+        }
+      },
+      "WriteTo": [
+        { "Name": "Console" }
+
+      ],
+      "Enrich": [ "FromLogContext" ]
+    } 
+»¹ÓĞ±ğµÄ²ÎÊıĞèÒª¿´ÎÄµµ
+
+ÅäÖÃ£º
+//¹¹½¨Ò»¸ö¶ÁÈ¡ÅäÖÃÎÄ¼şµÄ±äÁ¿
+ public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .Build();
+
+        public static void Main(string[] args)
+        {
+
+            Log.Logger = new LoggerConfiguration()
+                //¶ÁÈ¡ÅäÖÃÎÄ¼ş
+            .ReadFrom.Configuration(Configuration)
+            //ËùÓĞÊÂ¼şÖĞ½«ÌØ¶¨ÖµµÄÊÂ¼ş¼ÇÂ¼µ½ÈÕÖ¾µ±ÖĞ£¿Ó¢Óï²»ºÃÕæ·Ñ¾¢¡£¡£
+            .Enrich.WithProperty("App Name", "Serilog Web App Sample")
+            //¹¹½¨
+            .CreateLogger();
+
+            CreateWebHostBuilder(args).Build().Run();
+        }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-
             WebHost.CreateDefaultBuilder(args)
-
-            .ConfigureLogging((a,b)=> {
-                b.AddConfiguration(a.Configuration.GetSection("Logging"));
-            })
+                .UseSerilog()//Ìí¼Ó
                 .UseStartup<Startup>();
-ÕâÊÇ¶ÁÈ¡Ä¬ÈÏµÄ£¬µÚÈı·½µÄ»¹Ã»ÓĞ¸ãÃ÷°×
 
-appsettings.developmentÖĞÓĞÒ»¸ölogging ÆäÖĞdefault¶¨ÒåÁË×îµÍÊ²Ã´¼¶±ğµÄÈÕÖ¾¿ÉÒÔ±»¼ÇÂ¼£¬¿ÉÒÔ×Ô¼ºÉè¶¨
-ÏëÒªµÄ×îµÍ¼¶±ğµÄÈÕÖ¾
+Ê¹ÓÃ£ºÕı³£Ê¹ÓÃ¼´¿É
 
 

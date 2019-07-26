@@ -1,0 +1,22 @@
+写好代码
+生成dockerfile
+build一下
+运行
+
+1 写好代码
+
+2 生成dockerfile
+   vscode安装docker插件
+   ctrl+shift+p->docker->docker add....->选择语言.netcore->设置使用的端口
+   回车生成dockerfile
+   注意：dockerfile要和源码在一起，使用插件生成的dockerfile有bug解决方案见dockerfile详解，最后一个平台选linux
+
+3 build一下
+   在dockerfile所在的文件夹内
+   执行docker build -it 镜像名称 .
+   . 表示当前目录
+
+4 运行
+  docker run -d -p 8080:5000 --name 容器名称 -v ${PWD}:/app/out 镜像名称
+
+-v ${PWD}:/app/out：/app/out为程序所在的虚拟机的目录，将此目录映射到当前目录

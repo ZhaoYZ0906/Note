@@ -1,0 +1,22 @@
+默认配置文件有appsetting.json
+如果想要添加额外的配置文件可以：
+ public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((hostingContext, config)=> {
+                var env = hostingContext.HostingEnvironment;
+                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsetings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("Content.json", optional: false, reloadOnChange: false)//自己的文件
+                    .AddEnvironmentVariables();//将配置文件中的值读取出来
+            })
+                .UseStartup<Startup>();
+
+
+原理：
+CreateWebHostBuilder（）方法负责创建一个主机并且返回，之后调用ConfigureAppConfiguration负责对返回的主机进行一些列的配置，所谓配置就是执行一些方法，方法里面具有默认的值。如果想要使用自己定义的东西，只需要重新调用具体的方法 更改里面的值，添加新的配置。
+
+例子：
+WebHost.CreateDefaultBuilder(args).ConfigureAppConfiguration
+.ConfigureAppConfiguration方法在CreateDefaultBuilder里面已经被调用过了，自己手动调用一次添加自己想要的配置
+
+如果默认配置添加了A，B，你手动配置添加了B，C。则最后程序拥有A，B，C三种配置，并且B配置以手动配置为准（后一次调用方法里面的配置为准，因为后面覆盖前面）

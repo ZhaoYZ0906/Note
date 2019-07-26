@@ -1,0 +1,24 @@
+struct值类型，不支持继承
+struct和class相比缺少的东西：
+无参构造函数
+字段初始化器
+终结器
+virtual和protected成员
+
+
+struct本身有一个无参构造函数，但是开发人员不能对其重写
+创建时必须对所有字段进行初始化，如果没有初始化系统自动按位归零。
+也就是说，不允许有的赋值有的没赋值
+
+
+访问修饰符
+public公开
+internal当前程序集和朋友程序集可访问
+private本类可以访问
+protected本类和子类可以访问
+protected internal组合一下
+
+
+以外层的访问范围为主，外层限制内层
+外层private内层public
+内层编译之后为private

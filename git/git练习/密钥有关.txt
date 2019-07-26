@@ -1,0 +1,18 @@
+1 设置好自己的用户名和邮箱
+git config --global user.email/name ""
+
+2 生成自己的密钥
+ssh-keygen -t rsa -C "邮箱"
+
+3 让你输入自定义短语密码，直接回车就行
+
+4 出现
+私钥
+Your identification has been saved in /c/Users/Administrator/.ssh/id_rsa.
+
+公钥
+Your public key has been saved in /c/Users/Administrator/.ssh/id_rsa.pub.
+
+还有一些指纹什么的。
+打开公钥的文件复制出来，在github的setting里面添加即可，那个标题随便写记住就行。
+

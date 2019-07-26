@@ -1,0 +1,30 @@
+操作 操作名（变量（可有默认值）/输入变量（不可有默认值））{   // query 操作名($ID: int=1/$review: ReviewInput，$ep: Episode)
+	查询对象别名 查询对象（条件 ）{  // 别名 user （id：$ID）/（review：$review）/（episode: $ep）
+
+		... on 对象类型 { //当查询对象为查询类型时执行里面的内容   ... on NEWHOPE  当user对象为newhope
+		     查询参数 @include(if: Boolean)/@skip(if: Boolean)  //include包含 skip跳过
+		     ...  片段名 //（复用）
+		}
+
+		... on 对象类型 { //当查询对象为查询类型时执行里面的内容   ... on JEDI  当user为jedi
+		}
+	}
+}
+
+
+fragment（关键字） 片段名 on Character（这玩意好像是根目录？） {
+	具体要查询的对象
+  }
+}
+
+input（关键字） ReviewInput （输入类型名）{
+	具体要查询的对象
+}
+
+enum（关键字） Episode（枚举枚举名称） {
+  NEWHOPE（枚举值）
+  EMPIRE
+  JEDI
+}
+
+... on 对象类型 这玩意好像只适用于接口之类的东西

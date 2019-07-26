@@ -1,0 +1,30 @@
+Dockerfile的主要指令：
+
+FROM。通常情况下，你要创建的镜像是基于另外一个镜像的，这就需要使用FROM，当然也可以完全从头创建。
+MAINTAINER。该镜像的维护人。
+RUN。这里可以定义一些需要运行的命令。例如npm install，dotnet restore等等。
+COPY。开发的时候，可以把源码放在Volumes里。而在生产环境下，经常需要把源码复制到容器里面，使用COPY就可以做到这点。
+ENTRYPOINT。它可以定义容器的入口，把容器配置成像exe一样的运行文件。通常是一些例如dotnet 命令，node命令等等。
+CMD。设置容器运行的默认命令和参数。当容器运行的时候，这个可以在命令行被覆盖。
+WORKDIR。设定容器运行的工作目录。
+EXPOSE。暴露端口。
+ENV。设定环境变量。
+VOLUME。定义Volume，并控制如何在宿主中进行存储。
+
+自制镜像的时候使用docker插件生成的dockerfile有bug需要到docker文档Develop with Docker->Develop your apps on Docker->App development overview->页面上有Dockerize a .Net Core application进去使用里面的dockerfile。别忘了将aspnetapp.dll->项目名.dll
+
+dockerfile解析
+
+FROM microsoft/dotnet:sdk AS build-env   //镜像使用microsoft/dotnet:sdk  别名 build-env
+WORKDIR /app //工作目录为/app
+
+COPY *.csproj ./  //将项目文件复制到./  ./应该是虚拟机上的
+RUN dotnet restore //执行dotnet
+
+COPY . ./   //将当前目录（windows）里的文件复制到 ./  ./应该是虚拟机上的
+RUN dotnet publish -c Release -o out //执行命令
+
+FROM microsoft/dotnet:aspnetcore-runtime  //镜像使用microsoft/dotnet:aspnetcore-runtime
+WORKDIR /app   //工作目录
+COPY --from=build-env /app/out .  //将build-env （就是第一行的别名  ）下的/app/out路径下的所有文件复制到 . 路径   . 是当前路径
+ENTRYPOINT ["dotnet", "dockerTry.dll"]  //设置入口为执行dotnet dockerTry.dll

@@ -1,0 +1,48 @@
+1 在github上面创建一个库
+
+2 在自己的代码文件夹里创建一个库
+git init
+
+3 将自己的库与github上面的库连接起来
+git remote add 别名（方便记忆）ssh连接/https连接
+
+4 拉去github的代码
+git pull 别名 分支名（拉取的话一般拉去主分支master）
+git pull --rebase 别名 master
+
+--rebase：如果为true，则在获取后将当前分支重新绑定在上游分支的顶部。如果存在与上游分支对应的远程跟踪分支，并且自上次提取以来上游分支已重新定位，则rebase使用该信息来避免重新定位非本地更改。
+
+5 创建分支并且切换
+git checkout -b 分支名
+-b：如果没有则创建？
+
+6 提交代码
+6.1 添加的缓冲区
+git add 要添加的文件
+
+6.2 推送到本地代码库
+git commit -m ‘备注’
+
+6.3 推送到github
+git push 仓库别名 分支名
+
+7 切换分支
+git checkout master
+
+8 查看仓库的文件状态
+git status
+
+9 查看当前所有分支
+git branch
+
+
+
+
+
+
+
+
+
+
+
+

@@ -29,7 +29,7 @@ export class AppModule {}
 
 特别注释：
 imports:用于引用模块，并且把模块中标记 export 的类进行依赖注入
-providers: 用于引用类，并且将类进行依赖注入
+providers: 用于引用类/服务，并且将类进行依赖注入
 
 
 imports和providers中已经暴露的类都会自动进行依赖注入

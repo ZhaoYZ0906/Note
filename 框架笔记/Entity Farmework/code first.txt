@@ -1,9 +1,12 @@
 code first
 1 写好表结构
+
 2 写一个nameDbContext类一定要继承于DbContext
+
 3在nameDbContext中写关于表的属性
 public DbSet<表名> Students { get; set; }
-4重写一个叫OnModelCreating的方法
+
+4重写一个叫c的方法
 +------- override void OnModelCreating(ModelBuilder modelBuilder)
 注意参数
 
@@ -49,18 +52,6 @@ var host = BuildWebHost(args);
 
 host.Run();
 
-不管是否firstcode以下两句必须有
-var host = BuildWebHost(args);
-host.Run();
-
-
-第一次使用记录，可能存在理解混乱
-
-
-
-多个DBContext的数据库迁移
-
-第一个dbcontext一定数据库迁移正常
 
 
 

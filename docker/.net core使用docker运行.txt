@@ -1,0 +1,31 @@
+此笔记没有使用数据库/https因为还没有学到
+
+写.net core 
+修改.net core的一些设置
+放到docker
+
+1 写.net core 
+
+2 修改.net core的一些设置
+不要启用https
+加上：
+WebHost.CreateDefaultBuilder(args)
+            .UseUrls("http://*:5000")//这句这样从windows访问了，因为docker是在windows的虚拟机上的
+                .UseStartup<Startup>();
+
+放到docker
+
+docker run -it -p 8080:5000 -v ${PWD}:/app --workdir "/app" -v ${PWD}:/var/www microsoft/dotnet
+${PWD}只能在power shell中使用是返回当前路径
+-v ${PWD}:/app     创建一个卷（-v） 卷可以数据持久化/存储  卷的虚拟机的位置为/app映射到winwods位置为${PWD} 
+--workdir "/app"   设置工作路径为/app
+工作路径就是源码的路径
+
+-v ${PWD}:/var/www  创建一个卷  卷的虚拟机的位置为/var/www映射到winwods位置为${PWD} 
+这个卷主要是负责程序输出的路径，比如在程序中日志文件记录到 log/log.txt 就可以写为   -v windows上想要输出的地方路径:/ log
+
+microsoft/dotnet  docker镜像
+
+主要添加useurls 
+注意程序中输出的路径和windows实际路径的映射
+

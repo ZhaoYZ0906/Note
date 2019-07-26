@@ -1,0 +1,31 @@
+请求格式：
+
+请求行（包括：请求方法 路径 协议）
+头信息（可多行）（包括：key：value的键值对）
+空行
+主体信息（可空）（包括：要发送的内容）
+
+例子：
+
+POST /api/user HTTP/1.1
+Host：localhost
+content-type：application/json
+content-length：5
+
+12345（5个字节对应content-length的长度）
+
+
+响应格式：
+
+相应行（包括：协议 状态码 状态文字）
+头信息（可多行）（包括：key：value的键值对）
+空行
+主体信息（可空）（包括：要发送的内容）
+
+例子：
+
+HTTP/1.1 200 OK
+content-type：application/json
+content-length：5
+
+12345

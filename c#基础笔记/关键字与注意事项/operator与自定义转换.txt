@@ -1,0 +1,20 @@
+opertor用于自定义类型转化和重载运算符
+
+
+            //重载乘法运算符*
+            public static 返回类型 operator *(Feige f, Feige g)
+            {
+                return new Feige(f.a * g.a, f.b * g.b);
+            }
+ 
+            //自定义转换类型
+            public static implicit/explicit operator 目标类型(原类型 f)
+            {
+                return (int)(f.a * f.b);
+
+1）使用operator关键字
+2）operator结合使用explicit或implicit关键字
+3）方法必须定义为静态的
+4）传入的参数y是要转换的实例，而操作符类型是转换后的实例
+5）explicit显式转换
+6）implicit隐式转换

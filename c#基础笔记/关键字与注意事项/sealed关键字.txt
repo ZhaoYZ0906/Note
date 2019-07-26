@@ -1,0 +1,8 @@
+
+sealed关键字
+a中存在方法virtual A（）
+a1继承于a并且重写  override A（）
+如果加上 sealed override A（）那么a1的子类不可以重写这个方法
+a2继承于a1，但是a2不可以重写A（）
+
+sealed可以加在类上，那么类中的所有virtual方法都不可以被子类重写override

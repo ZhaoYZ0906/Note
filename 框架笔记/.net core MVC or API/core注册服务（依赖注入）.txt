@@ -3,6 +3,7 @@
 注册使用：
 services.AddScoped<IMyWelcome（接口类型）,myWelcome（实例化对象）>();
  //注册服务AddTransient每访问一个事件生成一个myWelcome,
+
 AddSingleton单例生成一个myWelcome,
 AddScoped每次请求生成一个myWelcome
 AddTransient的services是每次请求（不是指Http request）都会创建一个新的实例，
@@ -21,3 +22,57 @@ private readonly IMyserver<student> myserver;
 
 view视图的razer中的依赖注入
     @inject xxx类的服务 名称
+
+
+注册的对象初始化：
+一般来说通过以上几种方法注册产生的对象没有初始值，所以我认为比较适合于注册服务
+如果想要一个model并且具备一些默认值可以这样
+ services.Configure<Content>(Configuration.GetSection("ContentList"));
+只需要在指定的配置文件（默认为appsetting.json）里面添加对应的contenlist节点即可
+ "ContentList": {
+    "Id": 1,
+    "title": "title1 from diy json",
+    "content": "content1 from diy json",
+    "status": 1,
+    "add_time": null,
+    "modify_time": null
+  }
+这样注入的对象聚会有这些初始值
+
+
+一个接口多种实现的依赖注入
+
+第一种使用ieunumerbal：
+注入：
+services.AddSingleton<IDemo, AService>();
+services.AddSingleton<IDemo, BService>();
+接收：
+IEnumerable<IDemo> demos
+A = demos.FirstOrDefault(x => x.GetType().Name.Equals("AService"));
+B = demos.FirstOrDefault(x => x.GetType().Name.Equals("BService"));
+
+第二种使用transient扩展方法
+//先把多种实现注入了
+            services.AddSingleton<AService>();
+            services.AddSingleton<BService>();
+//这个扩展方法，先给一个iserviceprovider（服务供应商？）的参数然后返回一个func的函数，函数写具体的逻辑
+            services.AddTransient(factory =>
+            {
+                Func<string, IDemo> func = key =>
+                {
+                    if (key.Equals("AService"))
+                    {
+                        return factory.GetService<AService>();
+                    }
+                    return factory.GetService<BService>();
+                };
+                return func;
+            });
+接收：
+ public HomeController(Func<string,IDemo> Provider)
+        {
+            this._Provider = Provider;
+             A = _Provider("AService");
+             B = _Provider("BService");
+}
+

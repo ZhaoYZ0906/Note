@@ -1,0 +1,70 @@
+创建类时，先初始化字段-构造函数
+
+只读字段只能在声明的时候和构造函数里面被赋值
+
+
+方法签名：方法名+参数类型（与顺序有关，与参数名称和返回类型无关，其中不包括params，但包括out，ref关键字）
+
+void a（string ss）与void a（string ff）一致
+void a（string ss）与int a（string ff）一致
+void a（string ss，int ff）与void a（int ff，string ff）不一致
+void a（string ss）与void a1（string ff）不一致
+注意：
+void a（ref string ss）与void a1（out string ff）一致！
+
+
+方法简化写法（方法内只有一个语句的时候）
+
+int foo（int x）{return x*2；}
+等价于
+int foo（int x）=>return x*2；
+
+
+方法重载：
+指方法名一致，但是参数类型或者参数名不同
+
+int foo（int x，string y）
+int foo（string x，int y）
+
+
+本地方法：
+简化写法嵌套在正常方法内
+
+int A（int y）
+{
+     int foo（int x）=>return x*2；//本地方法，本地方法可以调用外层方法的参数，这里可以调用y
+//本地方法不可以使用static
+}
+
+
+扩展方法：
+必须为静态
+必须存在this关键字，否则就是静态方法
+static void write（this A）{}
+class A{}
+
+使用： A.write（）
+感觉像是A本身的方法，所以称之为扩展了A的方法-》扩展方法
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+体验：比ado好用，但是要写sql，和ef相比的话更灵活只有一个小包，据说联表查询快
+
+导入包：就叫dapper
+
+CRUD常规套路
+先要一个sqlconnection
+使用包里面的扩展方法（sql语句，sql语句中占位符的参数）
+
+public static void test_insert()
+        {
+            var content = new Content
+            {
+                title = "标题1",
+                content = "内容1",
+
+            };
+            using (var conn = new SqlConnection(connstr))
+            {
+                string sql_insert = @"INSERT INTO [Content]
+                (title, [content], status, add_time, modify_time)
+                VALUES   (@title,@content,@status,@add_time,@modify_time)";
+                var result = conn.Execute(sql_insert, content);
+                Console.WriteLine($"test_insert：插入了{result}条数据！");
+            }
+        }
+
+具体见代码吧

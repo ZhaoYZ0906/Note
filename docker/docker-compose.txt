@@ -1,0 +1,43 @@
+docker-compose可以同时管理多个镜像/容器（就是镜像太多的时候麻烦，所以用compose）
+
+编写docker-compose.yml
+使用
+
+
+编写docker-compose.yml  有需要在找吧
+如果需要将docker-compose.yml同级的代码生成镜像的话请写好dockerfile
+version: "3.7"  //版本号 3也可以
+services:  //构建的服务（容器）
+
+  db://这个容器叫db
+    image: postgres:9.4//使用的镜像为postgres:9.4
+    volumes:    //定义使用的卷
+      - db-data:/var/lib/postgresql/data
+    networks:  //定义使用的桥接网络
+      - backend
+
+  vote:
+    image: dockersamples/examplevotingapp_vote:before
+    ports:  //端口映射
+      - "5000:80"
+    networks:  
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:
+
+注意：version:这里有个空格"3.7"
+
+
+使用
+
+docker-compose build   根据文件创建和生成对应的容器
+docker-compose up  运行生成出来的容器
+docker-compose down 停止并且卸载运行的容器
+docker-compose stop 停止运行的容器
+docker-compose start 启动其中一个服务
+还有很多可以看文档

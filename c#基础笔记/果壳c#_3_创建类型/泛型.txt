@@ -1,0 +1,156 @@
+泛型的主要作用：使用占位符进行代码重用
+
+泛型的合成是在运行时
+
+class A<t>定义时，开放类型
+new A()<int>实例化时，封闭类型，因为占位符都已经被填充了
+
+泛型方法： void swap <t>(t a,t b)
+泛型类 class A<t>
+
+当方法引用类的泛型占位符时，则方法不能成为泛型方法
+
+只有类型和方法可以引用泛型参数
+但是属性 索引器 事件 字段 构造函数 操作符可以使用泛型类的泛型参数
+
+class struct interface delegate可以引入0-n个泛型参数
+
+泛型类可以被重载：
+class A
+class A<t>
+class A<t1,t2>
+这三个A类互不冲突
+
+获取泛型的默认值
+
+ void swap <t>(t a,t b){
+	default（t）//可以获得t的 默认值！，int为0，string为null
+}
+
+
+
+
+泛型约束：
+where T：base-class//表示必须为某个父类的子类
+where T：interface//表示必须实现某个接口
+where T：class//表示必须为引用类型
+where T：struct//表示必须为值类型，但是不包括可空的值类型
+where T：new（）//表示必须类中必须有一个无参构造函数
+where T：U： T必须继承于U
+
+可以作用于类与方法
+
+泛型类可以有子类
+子类中可以选择继续使用类型参数（占位符），或者使用具体类替换占位符，子类可以添加新的类型参数
+
+在子类中可以给父类的类型参数改名
+class list<T>{}
+class keylist<T1,T2>:list<T1>{}
+子类给父类的类型参数改名
+
+
+自引用泛型声明
+innterface IE<t>{bool equals(T obj)}
+class ballon :IE<ballon>
+{
+int a；
+bool equals(ballon obj){ return a==obj.a； }//这里的obj是对象本身，或者同为ballon类的其他对象
+}
+把某个类型参数定义为自己，那么实例化之后的对象就可以对 同类-自己/自己-自己  做某一些事情
+
+
+静态数据
+泛型类中的某个静态字段/属性。。。针对不同类型参数是区分的/隔离的
+
+class bob<t>{public static int count;}
+顺序执行：
+++bob<int>.count=1
+++bob<int>.count=2
+++bob<string>.count=1
+bob<bool>.count=0
+
+
+泛型类中的转换
+因为泛型类在编译时还是类型参数，所以正常的转换可能会被编译器误会(底层不确定拆箱装箱)（判定为自定义转换）
+如果需要转换由一下两种方案：
+使用as操作符最省心
+先转换为object在转换为具体类型 (string)(obejct)xxx
+
+
+泛型转换
+variance转换：时引用转换的例子，，引用转换值你不能改变他的值但是可以改变编译时的类型，一下是三种类型
+
+convariance协变，当着一个类的类型参数只作为返回值/out输出的时候，使用out标记，那么此泛型类协变，从子类可以转换为父类  ienumerable<string>->ienumerable<object>
+
+contravariance逆变,当类型参数只作为输入的时候，此泛型类可以声明为逆变，使用in进行标记。可以从父类转换为子类 action<object>->action<string>
+
+invariance不变，当类型参数即作为输入又作为输出的时候，此类型不可以转换
+
+注意 out和in的标记位置
+ienumerable<out t>协变的
+action<in t>逆变的
+ilist<t>不变的
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
