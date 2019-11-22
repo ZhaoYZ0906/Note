@@ -103,7 +103,6 @@ public class EmailTagHelper : TagHelper
 
 
 总结：好像有时候定义的属性传递数据，传递不过来，目前不知道为什么。
-觉得这种东西还是前台干比较好，而且传递数据asp-for可以搞定绝大部分
 
 
 

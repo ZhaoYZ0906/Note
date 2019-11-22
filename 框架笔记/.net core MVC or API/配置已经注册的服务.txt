@@ -1,0 +1,3 @@
+对于已经注册的服务，可以使用s
+ervices.configure<服务选项>(o=>{具体配置})
+o代表的是服务选项，一般叫serviceOption

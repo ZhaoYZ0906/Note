@@ -1,0 +1,84 @@
+1 路由存在于module之中，不过生成module的时候不一定自动生成路由，记得--dry-run先看看，如果没有看cli文档
+
+2 每个模块的路由是单例
+
+3 需要配置路由
+比如：
+
+const appRoutes: Routes = [
+  { path: 'crisis-center', component: CrisisListComponent },
+
+//：id是参数
+  { path: 'hero/:id',      component: HeroDetailComponent },
+
+  {
+    path: 'heroes',
+    component: HeroListComponent,
+//可以收集页面的某些信息
+    data: { title: 'Heroes List' }
+  },
+
+//当输出空的时候
+  { path: '',
+    redirectTo: '/heroes',
+    pathMatch: 'full'
+  },
+//以上没有一个可以配对
+  { path: '**', component: PageNotFoundComponent }
+];
+
+路由放置的顺序应该是从具体到模糊
+
+应用路由
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+注意
+当模块路由到模块的时候使用forroot，因为懒加载在需要用到的时候才加载
+当模块路由到组件的时候使用forChild，直接加载组件
+
+
+4 路由组件展示
+当通过路由找到了对应模块，那么展示的时候用
+<router-outlet> 相当于占位符
+当根据路由跳转到一个组件的时候，那么该组件的html展示在<router-outlet>之后
+
+5 路由链接
+需要通过链接按钮来进行路由跳转的时候：
+ <a routerLink="/路径名" routerLinkActive="active">文本</a>
+例子：当前路径为/user
+routerLink=“/a/b”则单击后为 /a/b  绝对路径
+routerLink=“a/b”则单击后为 /user/a/b 相对路径
+
+
+6 路由激活
+ <a routerLink="/路径名" routerLinkActive="classa">文本</a>
+routerLinkActive="classa" 会为激活的路由添加指定的css样式，我感觉没用。。。
+
+7 获取当前路由及相关信息
+文档-路由与当行-激活的路由
+主要是获取父兄子和一些其他的信息
+
+8 路由事件
+路由在各个阶段可以触发的事件
+
+9 总结 
+该应用有一个配置过的路由器。 外壳组件中有一个 RouterOutlet，它能显示路由器所生成的视图。 它还有一些 RouterLink，用户可以点击它们，来通过路由器进行导航。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

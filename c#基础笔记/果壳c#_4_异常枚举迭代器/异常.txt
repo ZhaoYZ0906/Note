@@ -1,0 +1,53 @@
+try{} //正常执行
+catch{} //try错误时执行
+finally{} //在try和catch（可选）执行完之后执行
+
+catch中可以 发访问exception对象，execption负责错误信息的收集
+
+当try触发了一个a的错误时，会执行捕获a类/a的父类异常的catch
+
+catch放置顺序：
+特定类型异常捕获（空指针/0除数。。。）
+总体类型异常捕获（execption类型）
+
+异常过滤
+catch（execption e）when（bool表达式）{}
+如果bool表达式为false则继续向下找
+这样的话可以存在多个相同异常捕获的catch但是bool表达式不同
+
+
+execption的几个关键属性
+stackTrace从异常发生地到catch块所有被调用的方法
+可能是从try开始到异常发生时所有被调用的方法吧。。
+message消息记录
+innerexecption，如果内层异常发生导致外层异常，那么记录信息存放在这个里面。
+
+如果try方法b中调用了一个方法a，a中也有try-catch，a中发生了异常被记录，那么a称之为内层异常，导致b方法也异常称之为外层异常，那么内层异常的信息存放在外层捕获的innerexecption中。并且innerexecption可以嵌套
+
+
+tryxx方法模式
+
+public bool tryparse（string input，out int returnval）
+{
+	转换逻辑
+	成功则把值赋给returnval，并且返回true
+	失败，返回flase，抛出异常
+}
+
+调用：
+tryparse（"",a）；
+这里不用判断返回值，因为如果错误那么在方法里面就已经抛出异常了。
+尽量不要在错误的时候返回false，因为多层调用的时候可能会记不住
+
+
+
+
+
+
+
+
+
+
+
+
+

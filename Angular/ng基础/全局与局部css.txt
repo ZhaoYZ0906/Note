@@ -1,0 +1,8 @@
+全局css
+在src目录下存在styles.css文件在里面导入css文件即可
+@import url('todomvc-app-css/index.css');
+注意这里todomvc-app-css为第三方包，所以不用写路径，如果自己写的文件写路径
+
+局部（组件）css
+组件装饰器
+styleUrls: ['./app.component.css']

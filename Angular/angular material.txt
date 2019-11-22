@@ -6,3 +6,6 @@ ng add @angular/material
 区别：第一个需要进行手动配置，第二个不需要
 
 手动配置：app.module.ts的imports中添加BrowserAnimationsModule，记得加引用
+
+不要用cnpm装
+学会看文档，文档很详细

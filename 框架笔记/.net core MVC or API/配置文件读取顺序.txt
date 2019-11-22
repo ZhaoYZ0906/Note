@@ -1,0 +1,7 @@
+1 appsettting.json 优先级4
+2 appsetting.{环境变量}.json 优先级3
+3 secretmanager 优先级2
+4 环境变量 优先级5
+5 命令行参数 优先级最高
+
+

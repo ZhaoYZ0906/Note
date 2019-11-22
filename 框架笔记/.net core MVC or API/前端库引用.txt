@@ -1,6 +1,14 @@
 前端库引用在vs中可以使用npm（npm没装也能用。。。）
+
+npm配置文件使用方法：
 1 添加一个npm配置文件（默认名称即可，json格式），找不到直接在搜索框搜npm
+
 2 在文件中添加一个“"dependencies": { "jquery": "3.3.1",}”对象，写完后保存npm自动下载对应框架
+
+3.0为 "devDependencies": {
+    "bootstrap": "4.3.1"
+  }
+
 3 修改中间件，添加：
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -9,6 +17,7 @@
 	//知名文件夹路径   env可以读取到
                 FileProvider=new PhysicalFileProvider(Path.Combine(env.ContentRootPath,"文件夹名"))
             });
+
 注：这个文件夹在资源管理器中看不到因为被默认排除在方案外，只要在资源管理器中点 显示所有文件即可
 
 4 在视图中正常引用即可
@@ -39,9 +48,14 @@ tag与框架引用：
 
 
 
+添加客户端库方法：
+项目-添加-客户端库
+提供程序选unpkg
+库填写  库名@版本号
+安装，会在wwwroot下面产生lib文件夹将库写在里面
 
 
-
+多个css合并成一个可以看文档
 
 
 

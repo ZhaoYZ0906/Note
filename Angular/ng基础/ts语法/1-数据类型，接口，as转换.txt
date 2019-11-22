@@ -1,0 +1,56 @@
+定义变量关键字
+var 全局定义
+let  局部定义 {}之内有用，所以多使用let
+const 常量不谈
+
+boolean（布尔型）：true/false
+
+number（数值型）
+
+string（字符串型）：支持${变量名}
+
+array<数组类型>
+let arr:array<number>=[1,2,3]
+let arr:number[]=[1,2,3]
+
+[type,type](元组):一个数组由多种类型的数据组成
+let arr:[string,number]=[1,'zyz'];
+注意【】内定义了n个类型，长度必须n，并且类型顺序要一至
+let arr:[string,number]=['zyz'，1];//错误类型顺序不一致
+let arr:[string,number]=[1，'zyz'，2];//错误元组只定义了两个元素，这里有三个
+
+object：赋值一个对象，但是加上object编译器不推断对象里面的类型导致没有提示，不加的话有提示，所以不如不加
+let user：object={
+	name：‘zyz’，
+	id=1
+}//没有提示，所以定义对象的时候用接口比较好
+
+any（任意类型），跟使用js时候一样想用什么类型就用什么类型，少用
+
+void（空类型）：只能用于函数返回值
+
+null和undefind：
+null只能是null，
+undefind只能是
+很少用
+
+
+
+interface 结构名{
+	属性...
+}
+let xxx:接口名={
+	赋值
+}
+
+
+
+as转换
+let a：number=1
+let str：string=a as string
+
+
+
+
+
+

@@ -1,0 +1,54 @@
+剩余参数：
+
+//注意： 不能直接 let ...arr：numbernumber[] 这样不行
+//参数arr可接收任意个number参数
+function sum(...arr: number[]): number{
+    let result: number = 0;
+    arr.forEach(function (item) {
+        result += item;
+    });    
+    return result;
+}
+sum(1, 2, 3, 4, 5, 6, 7, 8);
+sum(1, 2, 3, 4);
+
+默认参数和可选参数
+public add（a?:number,b:number=1）{
+}
+
+lambda有点像委托
+let aa: (a:number,b:number) => number
+定义一个变量 aa 他的类型是一个(a:number,b:number) => number，有两个参数a和b 并且返回值为number的方法，这个类型有点像方法签名，符合这个签名的方法都可以赋值给aa变量
+
+
+展开操作符
+
+//数组展开操作符
+let arr1: number[] = [1, 2, 3];
+let arr2: number[] = [4, 5, 6, ...arr1];
+//等价于
+//let arr2: number[] = [4, 5, 6,1,2,3];
+
+let arr: number[] = [...arr1, ...arr2];
+//等价于
+//let arr2: number[] = [1,2,3,4,5,6];
+//展开操作符编译成js时，var arr = arr1.concat(arr2);
+
+
+//对象展开操作符
+//相当于把一个对象的属性添加到另外一个对象，使第二个拥有第一个的属性和方法
+{
+    let obj1 = {
+        id: 1,
+        sum():void{}
+    };
+
+    let obj2 = {
+        ...obj1,
+        name: 'zyz'
+    };
+    obj2.id;
+    obj2.name;
+    obj2.sum();
+}
+//当其中一个对象继承于接口的时候也适用

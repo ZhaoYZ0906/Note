@@ -47,6 +47,9 @@ mvc客户端：
 
 2 identityserver配置依赖注入
 
+//不启用默认claim 两个用一个即可
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+//清除默认的clasim
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(o=> {

@@ -1,0 +1,16 @@
+创建一个vue对象绑定一个元素
+let vm = new Vue({
+      el: '#app',//绑定id为app的元素
+      data: {
+//这里的属性是可以自己定义
+        msg: 'hello word',
+        btnText: '提交'
+      }
+    });
+
+进行显示：
+    <div id="app">
+      {{ msg }}//应该是对应单向绑定
+      <input type="button" v-bind:value="btnText"></input>//应该对应双向绑定
+      <p v-bind:title="btnText">hello</p>
+    </div>

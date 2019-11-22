@@ -1,0 +1,50 @@
+ts中的解构赋值：
+
+数组：
+let arr:number[]=[1,2,3];
+let A:number=arr[1];//正常赋值
+let [num1,num2,num3]=arr//解构赋值
+注意 接收数组的参数不可以被约束类型
+
+
+
+对象
+interface IStudent { 
+    name1: string,
+    id:number
+};
+
+let student: IStudent= {
+    id: 1,
+    name1:'zyz'
+}
+let { name1: a, id: b } = student;
+接收使用接口约束的对象时，接收参数不可以被约束
+
+let wbb = {
+    a: 1,
+    b:'sss'
+}
+let { a: a1, b: b1 }: {a:number,b:string}=wbb
+接收自定义对象时，接收参数可以被约束
+
+
+方法：
+function add([x, y,z]:[number,number,number]): number { 
+    return x + y;
+}
+add(【0,1,2】)；
+方法的参数列表可以被约束类型
+
+function ii( id:number, name:string): void { 
+
+}
+ii(student.id, student.name1);
+注意：方法接收的时候不要指望解构赋值
+
+
+
+
+
+
+

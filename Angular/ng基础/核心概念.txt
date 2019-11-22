@@ -1,0 +1,78 @@
+组件：一个ng模块由n个组件构成，多个组件相结合构成一个模块，组件可以理解为积木，一个东西由多块积木构成。
+
+组件的意义：
+1 分治：一个模块由多个组件构成，那么每个组件对应的逻辑只需要封装在组件内部即可，一个组件只管自己的逻辑，不会像非组件化中一个页面中所有的逻辑都放在一个<script>标签中
+2 复用：组件一旦封装完成，可以在一个项目中多处复用和在各个ng项目中复用，减少代码量。
+
+组件的组成：
+html页面
+css（其他格式）页面
+ts类文件
+测试（可选）文件
+一般由这四个文件构成
+
+ts类中的注释
+@Component({
+  selector: 'app-roots',//组件名称，对应html中的路由标签，例如<app-roots></app-roots>
+  templateUrl: './app.component.html',//组件对应视图
+  styleUrls: ['./app.component.scss']//组件对应的css文件,这里是个数组可指定多个
+})
+//组件类的具体逻辑
+export class AppComponent {
+  title = 'zyz & wbb';
+}
+
+
+模块：一个页面由多个模块构成，一个模块由多个组件构成，一个模块负责一个功能，一个模块下的组件协作完成某个功能。比如展示模块，由图表组件和文字组件构成。
+理解可能不太清楚。。。
+
+模块的意义：分治？不明。。。
+
+模块的组成：
+ts类文件
+路由文件
+
+ts类文件中的注释：
+//导入的包
+import { FooComponent } from './Component/foo/foo.component';
+
+@NgModule({
+  //属于该模块的组件
+  declarations: [AppComponent, FooComponent],
+  //依赖于哪些模块
+  imports: [BrowserModule, AppRoutingModule],
+  //该模块中的依赖注入
+  providers: [],
+  //该模块的启动入口
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+
+
+模板：组件对应的视图
+
+元数据：对组件的描述，ts中的这一部分是元数据
+@Component({
+  selector: 'app-roots',//组件名称，对应html中的路由标签，例如<app-roots></app-roots>
+  templateUrl: './app.component.html',//组件对应视图
+  styleUrls: ['./app.component.scss']//组件对应的css文件,这里是个数组可指定多个
+})
+
+数据绑定：就这样：{{}}
+
+指令：组件视图中的 *ngif....
+
+服务：一个单独的类，里面包含一些逻辑，可以被组件调用/重用 一般http的具体请求逻辑写成一个服务类，类似于仓储模式下对数据库的操作类
+
+依赖注入：在xxx.module.ts中的providers: []写入即可
+等价于core的startup中configureServices（）
+
+
+
+
+
+
+
+
+
+

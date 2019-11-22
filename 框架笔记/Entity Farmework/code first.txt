@@ -1,13 +1,23 @@
 code first
+
+需要的库：
+microsoft.entityframeworkcore
+microsoft.entityframeworkcore.tools 这个包括design
+tools是一些脚本支持比如add-migrations
+design是数据库迁移引擎
+microsoft.entityframeworkcore.sqlserver/mysql...
+
 1 写好表结构
 
 2 写一个nameDbContext类一定要继承于DbContext
+构造函数一定要是public
 
 3在nameDbContext中写关于表的属性
 public DbSet<表名> Students { get; set; }
 
 4重写一个叫c的方法
 +------- override void OnModelCreating(ModelBuilder modelBuilder)
+这里面写表关系
 注意参数
 
 5方法里面可以写
@@ -30,6 +40,8 @@ services.AddDbContext<MySchoolDbContext>(d => d.UseSqlServer(Configuration.GetCo
 
   }
 
+
+//种子数据部分
 8主函数中写入
 
 var host = BuildWebHost(args);

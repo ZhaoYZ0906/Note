@@ -1,0 +1,32 @@
+双向绑定必须引入froms模块
+在使用模块文件夹中引入，例子在根模块中引入
+
+app.module.ts中
+import { FormsModule } from '@angular/forms';
+
+在装饰器的imports中添加formsmodule
+imports: [BrowserModule,FormsModule]
+
+根模块先导入，然后用的模块再导入，必须导入
+
+使用：
+组件的ts文件中，声明一个属性，比如
+public newstr = '';
+
+html文件中使用
+    <input
+      autofocus //自动获取焦点
+      [(ngModel)]="newstr"//双向绑定到属性
+    />
+
+注意：当双向绑定作用域文本框时则接收文本框的数据，作用于选择按钮时，如果绑定对象为bool可控制是否选中
+
+双向绑定应用于：
+在界面上可以直接改
+改完之后引起其他地方的改动
+
+单项绑定
+间接改某个东西（文本框接收传到后面改）
+只做展示
+
+在模板中绑定变量时变量一定要是public，不然没法绑定，注意，依赖注入时候的权限

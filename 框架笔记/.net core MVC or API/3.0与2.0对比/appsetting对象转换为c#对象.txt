@@ -1,0 +1,7 @@
+appsettting中的为json对象，如果转换为指定的C#对象需要
+
+services.configure<指定类>（_configuration.getsection("json对象名")）;
+
+使用
+依赖注入：
+Ioptions<指定类>

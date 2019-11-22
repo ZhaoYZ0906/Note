@@ -1,0 +1,5 @@
+*ngif=" bool"
+ngif中的判断结果直接决定某个元素是否显示
+比如
+div *ngif=false
+那么这个div不显示，反之则显示

@@ -1,0 +1,9 @@
+父组件的html调用子组件
+<app-hero-detail [hero]="父组件的对象/值"></app-hero-detail>
+
+子组件接收：
+只需要再ts类里面暴露出一个属性
+ @Input() hero: Hero;
+
+注意input需要导入
+import { Component, OnInit, Input } from '@angular/core';

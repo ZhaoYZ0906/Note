@@ -1,0 +1,15 @@
+主机构建方式改变：
+2.0：
+
+        public static IWebHost BuildWebHost(string[] args) 	=>
+             WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build();
+
+3.0：
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+ConfigureWebHostDefaults所有配置在这个方法内进行，并且取消了build方法

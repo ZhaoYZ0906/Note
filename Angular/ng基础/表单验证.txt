@@ -1,0 +1,101 @@
+1 写input
+2 双向绑定
+3 临时变量与ngform
+4 添加视觉反馈
+5 添加错误信息
+6 ngsubmit提交表单
+7 禁用提交按钮
+
+
+1 写input
+   <input
+      //基础信息部分必须有name
+      type="email"
+      id="username"
+      name="username"
+
+      //限制信息部分，这个属于h5 input的属性
+      required
+
+      //双向绑定与临时变量
+      [(ngModel)]="form.username"
+      #username="ngModel"
+    />
+
+
+2 双向绑定
+在表单component所属的module中导入formsmodule
+双向绑定的时候必须有name属性
+
+
+3 临时变量与ngform
+临时变量是定义在html标签上的变量，相当于把该标签的module/该标签 赋值给了该变量
+例子：#username="ngModel" 那么username就有ngmodel的所有信息和一些其他信息，比如验证是否通过
+
+ngform代表整个form，需要将其赋值给一个变量，在对整个表单进行操作的时候可以用到
+
+注意临时变量不要和ts文件中的变量重名，不然编译默认选择临时变量，而不是ts文件中的变量
+
+
+4 添加视觉反馈
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+复制完事，什么都不用改，在input前面会出一个表示状态的小条子
+
+
+5 添加错误信息
+    <input
+      type="email"
+      id="username"
+      name="username"
+      class="form-control"
+      placeholder="Email address"
+      required
+      [(ngModel)]="form.username"
+      #username="ngModel"
+    />
+
+    //这里使用临时变量来判断对应input中ngmodel的状态
+    <div
+      [hidden]="username.valid || username.pristine"
+      class="alert alert-danger"
+    >
+      username是必填项
+    </div>
+
+通过判断临时变量的状态值来判断是否合格
+判断的值为bool
+
+状态                  为真时的 CSS 类       为假时的 CSS 类
+
+控件被访问过      ng-touched            ng-untouched
+
+控件的值变化了   ng-dirty                  ng-pristine
+
+控件的值有效。    ng-valid                 ng-invalid
+
+
+6 ngsubmit提交表单
+  首选需要一个submit按钮
+  其次在form加上(ngSubmit)="方法名()"
+  当单击submit时调用方法
+
+
+7 禁用提交按钮
+通过ngform的状态值（ ng-valid ）来判断
+ <form  #sform="ngForm">
+需要一个临时变量
+
+    <button
+      type="submit"
+      [disabled]="!sform.form.valid"
+    >
+当表单的值无效时禁用
+
+
+

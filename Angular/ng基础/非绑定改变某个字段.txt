@@ -1,0 +1,14 @@
+在不能使用双向绑定的时候改变字段的值
+比如单击一个按钮改变某个字段的值
+
+可以直接赋值：
+(click)="display = 'Completed'"
+
+可以调用方法
+(click)="display = edit（）"
+
+但是
+不能调用属性的set方法
+不能调用属性的set方法
+不能调用属性的set方法
+(click)="display = SetA（'Completed'）"

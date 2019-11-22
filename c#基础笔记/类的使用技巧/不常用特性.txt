@@ -1,0 +1,35 @@
+AttributeUsage控制特性类的某些规则
+
+1 AttributeUsage只能作用与继承Attribute的类
+
+2 ValidOn 标记该特性可以添加在哪些地方
+值为枚举包括：
+AttributeTargets.All/...
+
+3 AllowMultiple 该特性能否在同一个东西上添加多次
+help的AllowMultiple 为false
+
+    [Help("this is a do-nothing class")]
+    [Help("it contains a do-nothing method")]     //error
+    public class AnyClass
+    {
+        public void AnyMethod()
+        {
+        }
+    }
+
+抛出异常，因为在一个类上添加了两次
+
+4 Inherited 该特性能否被继承
+Inherited 为false
+
+　　 [Help("BaseClass")]   
+　　public class Base   
+　　{   
+　　}   
+　　   
+　　public class Derive : Base   
+　　{   
+　　} 　
+derive没有help特性
+

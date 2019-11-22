@@ -1,0 +1,36 @@
+依赖注入的三种方法：
+@Injectable
+@NgModule
+@Component
+
+angular的大部分核心功能都是用了这种，所以在程序中直接用（路由）
+在一个类上加@Injectable，在程序启动时会自动注册到全局容器当中，其他地方直接使用
+@Injectable()
+export class UserService {
+  constructor() { }
+}
+
+
+@NgModule
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
+  providers: [UserService],//写在这里
+  bootstrap: [AppComponent]
+})
+
+
+@Component
+@Component({
+  selector: 'app-test',
+  providers: [ UserService ],
+  template: ``
+})
+
+
+单例依赖注入：
+在app.module.providers或者app.component.providers中依赖面进去这个服务，在子component和子module中的component中的构造函数中国呢注入进去这个服务，这个服务的表现特征是 单例 的。
+
+在懒加载的子module.providers 中依赖进去这个服务，在这个module下面的component中的构造函数中注入进去这个服务，这个服务表现特征是 单例 的。
+
+在component.providers中依赖进去这个服务，然后在component的构造函数中依赖注入进去这个服务，这个服务表现特征是 非单例 的.

@@ -53,7 +53,63 @@
 
 
 
-三 分布式缓存：学redis时做
+三 分布式缓存（redis）：
+需要的包：Microsoft.Extensions.Caching.Redis这个包与StackExchange.Redis（redis读写包）有冲突，
+因为两个包中包含有同一个类IConnectionMultiplexer，把StackExchange.Redis卸了不用改动代码，可以使用Microsoft.Extensions.Caching.Redis中的IConnectionMultiplexer类，即原功能不受影响。
+
+注入：
+ services.AddDistributedRedisCache(option=> {
+                option.Configuration = "localhost";//缓存服务器的ip
+                option.InstanceName = "redis-cache";//起一个名字，好像在redis中可以查到这个库，但是我不知道怎么找。。。
+            });
+
+构造函数注入
+public HomeController(IConnectionMultiplexer redis, IDistributedCache distributedCache)
+        {
+            this.redis = redis;
+            db = redis.GetDatabase();//正常的redis读写对象
+            this.distributedCache = distributedCache;//这个是缓存的对象
+        }
+
+使用缓存
+public IActionResult Index()
+        {
+	//先看缓存中有没有
+            var value=distributedCache.Get("key-name");
+            if (value == null)
+            {
+	//假设这是从数据库中存储的对象，因为redis缓存方法只接受byte【】的数据，所以将他转换成byte【】
+                var obj = new Dictionary<string, string>
+                {
+                    ["a"] = "zyz",
+                    ["b"] = "wbb"
+                };
+	//转换
+                var str = JsonConvert.SerializeObject(obj);
+                byte[] encoded = Encoding.UTF8.GetBytes(str);
+	
+	//设定一些参数，这个是相对缓存时间
+                var option = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(30));
+	//存起来
+                distributedCache.Set("key-name", encoded, option);
+
+                return View( obj);
+            }
+            else {
+	//从reids中读出来的也是byte【】，所以要转为自己需要的格式，这里转换为字典
+                var str= Encoding.UTF8.GetString(value);
+                var obj= JsonConvert.DeserializeObject<Dictionary<string,string>>(str);
+
+                return View(obj);
+            }            
+        }
+
+说明：
+distributedCache中一共有4组（方法和异步版本）主要方法：
+获取：get
+设置：set
+刷新：Refresh
+移除：Remove
 
 
 四 客户端缓存（RESPONSE/CacheProfile）:这是一个Attribute

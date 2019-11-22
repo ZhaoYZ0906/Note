@@ -1,0 +1,30 @@
+2.0 中router作为mvc中间件的一部分，为mvc提供路由服务
+
+app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+还有标签路由
+
+
+3.0 中router作为一个中间件存在，也可以服务与mvc中间件之外的中间件（比如signalr）
+            app.UseRouting();
+
+添加了端点中间件 UseEndpoints
+其作用是注册端点（localhost：8000/端点。。。）
+与路由中间件配合使用
+
+端点中间件相当于原来的路由（只是写法类似）
+app.UseEndpoints(endpoints =>
+            {
+	//配置路由写法
+                endpoints.MapControllerRoute(
+                        name: "defaults",
+                        pattern: "{controller=Home}/{active=Index}/{id?}"
+                    );
+
+	//标签路由写法
+                endpoints.MapControllers();
+            });

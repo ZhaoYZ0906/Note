@@ -1,0 +1,95 @@
+1对1
+既然是一对一，那么肯定有一张表里面存在外键，且索引唯一（由数据库控制）
+a中
+        public int id { get; set; }
+        public B b{ get; set; }
+b中
+        public int id { get; set; }
+        public int bid { get; set; }
+        public B b{ get; set; }
+
+那么关系设定为：
+modelBuilder.Entity<b>().
+//从b的角度出发，b单方向指向a
+HasOne(x => x.a).
+//来到a的角度，设定一对一关系，并且单方向指向b
+WithOne(x => x.b).
+//设置外键存在于b中，是bid属性为外键
+HasForeignKey<b>(x => x.bid);
+
+
+一对多（x对n）
+n表中肯定存在外键
+从n中出发单向指向x
+从x中出发，指向多个n
+
+x
+        public int id { get; set; }
+        public IEnumerable<n> ns { get; set; }
+因为x存在多个n，所以x中要有一个list存放n
+
+n
+        public int id { get; set; }
+        public int xid { get; set; }
+        public x x { get; set; }
+n对应一个x，所以存在一个x属性，并且外键设置在n中所以存在xid
+
+关系设定：
+modelBuilder.Entity<n>().
+从n的角度出发，n单方向指向x
+HasOne(x => x.x).
+从x的角度出发，x指向多个n，所以withmany
+WithMany(x => x.n).
+回到n的角度设置外键
+HasForeignKey(x => x.nid);
+
+
+
+多对多
+多对多存在一个中间表，由n1对中间表的n对1 加上  n2对中间表的n对1组成n对n
+
+n1
+        public int id { get; set; }
+        public IEnumerable<中间> 中间表 { get; set; }
+
+n2
+        public int id { get; set; }
+        public IEnumerable<中间> 中间表 { get; set; }
+
+中间表
+
+        public int id { get; set; }
+
+        public int Ctryid { get; set; }
+        public Ctry ctry { get; set; }
+
+        public int companyid { get; set; }
+        public company company { get; set; }
+
+关系设定和1对n一样只不过有两个
+modelBuilder.Entity<中间表>().
+从中间表出发，单向指向n1
+HasOne(x => x.n1).
+从n1出发，指向多个中间表
+WithMany(x => x.中间表).
+在中间表设置外键为n1id
+HasForeignKey(x => x.n1id);
+
+modelBuilder.Entity<中间表>().
+HasOne(x => x.n2).
+WithMany(x => x.中间表).
+HasForeignKey(x => x.companyid);
+
+
+
+
+
+
+
+
+
+
+
+
+
+

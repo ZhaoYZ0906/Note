@@ -1,0 +1,147 @@
+一 类的基本写法：
+class student{
+    name: string;
+    age: number;
+
+    //构造函数
+    constructor(name: string, age: number) { 
+        this.name = name;
+        this.age = age;
+    }
+
+    hello(): void{
+        console.log(this.name+':'+this.age);
+    }
+}
+
+
+二 类的继承，默认值与重写
+1 继承使用关键字 extends
+2 继承默认继承父类的方法，如果继承父类的属性，在构造函数使用this.xxx之前执行super（），并且要满足父类的构造函数
+3 子类重写方法时，直接写相同的方法名即可，如果还要用到父类中的逻辑，则super.方法名（）；
+4 设置默认值，直接在定义属性的后面写值即可
+
+例子：
+{
+    class person{
+        name: string;
+        age: number;
+        id: number=1;//设置某属性的默认值
+
+        constructor(name: string, age: number) { 
+            this.name = name;
+            this.age = age;
+        }
+
+        eat(): void{
+            console.log('This is person of eat!')
+        }
+    }
+
+    class student extends person{
+        constructor(name:string,age:number) { 
+            super(name, age);//必须在this之前调用
+            this.id = 2;
+        } 
+
+        eat(): void{
+            console.log('this is student of eat!');
+            super.eat(); //去掉，则不使用父类的逻辑           
+        }       
+    }
+
+    new student('', 1).eat();
+}
+
+
+三 权限修饰符
+ts默认public
+private：不能被外部访问，子类中不能访问
+protected：不能被外部访问，子类中能访问
+readonly：只能是在声明或者构造函数中被赋值
+
+关于修饰符的简写：
+{
+    class student{
+        public name: string;
+        public age: number;
+        constructor(name:string,age:number) {
+            this.name = name;
+            this.age = age;
+         }
+    }
+    //简写,可以混写，感觉简写不好，不方便阅读
+    class person{
+        id: number;
+        constructor(public name: string, public age: number, id: number) {
+            this.id=id
+         }
+    }
+}
+
+注意，
+有两个类，属性一一对应且全部为public时，两个类可以相互赋值 例如 b=a
+
+有两个类，属性一一对应且部分为public时，两个类不可以相互赋值 例如 b=a//错误
+
+除非一个继承于另一个实现多态，ts文档中说的是两个类的保护属性在同一个地方声明（都在父类中，子类重写也是在父类中先定义后重写）
+
+
+四 get/set
+{ 
+    class student{
+        private _id: number;
+        //get需要返回值 不需要参数
+        get id(): number {
+            return this._id;
+        }
+        //set需要参数 不需要返回值
+        set id(newid:number) {
+            this._id = newid;
+         }
+    }
+}
+比较：
+C# 
+string str{ get{return str；}   set{str=value；} }
+ts
+get str():string{return str;} set id(value:string){ str=value}
+
+ts的getset更像方法一点
+
+五 静态成员（属性与方法）
+//与c#基本一致
+{ 
+    class student{
+        public static name1: string;
+    }
+    student.name1;
+}
+
+
+六 抽象类
+//与c#基本一致
+{
+    abstract class student{
+        public abstract name: string
+
+        abstract hello(): void;
+    }
+    class person extends student { 
+        public name: string;
+        public hello(): void { }
+    }
+}
+
+七 类的初始化
+{
+  class a {
+    d: number;
+    b: number;
+    c: number;
+  }
+  let A: a = new a();
+  //let A: a = new a(){b: 2, c: 3, d: 4};这是错的
+  let A2: a = { b: 2, c: 3, d: 4 };
+}
+

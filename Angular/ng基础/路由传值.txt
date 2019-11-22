@@ -1,0 +1,25 @@
+形式：/home？username=qqq&&id=1
+routelink
+ts重定向传值
+
+routerlink：
+    <a
+      [routerLink]="['/major/userlist']"//路由地址
+      [queryParams]="{ username: 'qqq', id: 1 }"//要传递的json对象
+      >测试</a
+    >
+
+ts重定向：
+    private router: Router
+    this.router.navigate(['/major/userlist'], {//路由地址
+      queryParams: { username: this.myform.username }//传递的json对象
+    });
+
+取地址参数
+constructor(_activerouter: ActivatedRoute) {
+    this.activerouter = _activerouter;
+  }
+
+  ngOnInit() {
+    this.activerouter.snapshot.queryParams.Id;
+  }

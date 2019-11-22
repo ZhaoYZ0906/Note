@@ -1,0 +1,88 @@
+泛型：
+
+一 基本
+泛型方法：
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+泛型类：
+class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+写法基本一致，只有在泛型约束上有区别
+
+
+二 约束
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity
+  <T extends Lengthwise>(arg: T): T 
+{
+    console.log(arg.length); 
+    return arg;
+}
+T必须继承Lengthwise接口/类
+比如：loggingIdentity({length: 10, value: 3});
+传入的对象拥有length属性则满足Lengthwise
+
+对比：
+ts在<>中写约束：add<T extends xxx>():number{}
+c#在结束后写where： void add<T>（）where T:xxx{}
+
+
+三 类类型
+ts可以泛型调用类的构造函数，所以可以传入类名生成对象
+public create<A extends Animal>(c:{new():A}):A{}
+A必须实现animal，一般来说animal有很多类继承它
+c的类型为A，{new():A}调用A的构造函数赋值返回一个A实例，将A实例赋值给c
+
+使用的时候
+create（类名）；
+注意不是传入字符串
+class A；那么则caeate（A）
+
+这样效果就是传入一个类构建一个该类的实例，已经写好的工厂模式
+
+逻辑代码
+ class BeeKeeper {
+    hasMask: boolean;
+  }
+
+  class ZooKeeper {
+    nametag: string;
+  }
+  class Animal {
+    numLegs: number;
+  }
+
+  class Bee extends Animal {
+    keeper: BeeKeeper;
+  }
+
+  class Lion extends Animal {
+    keeper: ZooKeeper;
+  }
+
+  function createInstance<A extends Animal>(c: new () => A): A {
+    return new c();
+  }
+
+  createInstance(Lion).keeper.nametag; // typechecks!
+  createInstance(Bee).keeper.hasMask; // typechecks!
+//这里不用写<>是因为c: new () => A时可以自动推导出A的类型
+
+
+
+总结：除了类类型是特殊的，泛型约束不太一样之外基本都一样
+
+
+
+
+
+
+
+

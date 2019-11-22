@@ -1,0 +1,23 @@
+//引用的模块
+import { Component } from '@angular/core';
+
+//组件的装饰器
+@Component({
+
+  //可以通过这个标签调用该组件 <app-root>
+  selector: 'app-root',
+
+  //组件对应html
+  templateUrl: './app.component.html',
+  //内联html这两个用一个即可
+  template: '<a>xxx</a> ',
+
+  组件对应的css，这里是多个css文
+  styleUrls: ['./app.component.scss']
+})
+
+//暴露组件类
+export class AppComponent {
+ //具体逻辑
+
+}

@@ -1,0 +1,12 @@
+这里的持久化好像是在一个文件里面不是数据库
+
+从本地读数据：
+JSON.parse(
+    window.localStorage.getItem('todolist') || '[]'
+  );
+
+从本地写数据：
+//指数据发生变化的时候调用
+ngDoCheck() {
+    window.localStorage.setItem('todolist', JSON.stringify(this.todolist));
+  }

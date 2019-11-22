@@ -1,0 +1,2 @@
+调用属性：{{ message }}//双向绑定
+调用方法：<button (click)="change()">变更</button>

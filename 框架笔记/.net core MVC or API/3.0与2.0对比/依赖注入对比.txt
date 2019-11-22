@@ -1,0 +1,18 @@
+2.0
+使用service.addmvc或者service.addmvccore
+mvccore比mvc更加简洁，mvc中调用mvccore方法，并在其上面扩展了一些其他配置，比如认证，格式化输出器等
+
+3.0
+可以使用
+	service.addmvc
+
+	service.addmvccore
+
+            //添加控制器与视图，但是不包括razor，前后端不分离使用这个
+            services.AddControllersWithViews();
+
+            //只添加控制器，api使用这个
+            // services.AddControllers();
+
+            //添加razor，看情况加
+            //services.AddRazorPages();

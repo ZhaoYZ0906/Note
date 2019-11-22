@@ -1,0 +1,39 @@
+循环
+for包含in/of两种循环
+区别:
+两者都将遍历的数组/集合...看作一共对象
+for...in 遍历的是对象的key
+for...of 遍历的是对象的value
+
+{ 
+    let arr: number[] = [4, 5, 6];
+    for (let i in arr) { 
+        console.log(i);//输出012指索引
+    }
+    for (let i of arr) { 
+        console.log(i);//输出456指值
+    }
+}
+
+foreach
+arr.forEach((x) => { console.log(x);});//456使用方法不一样
+
+
+分支：
+if（true）{}
+
+switch（变量/枚举）{
+  case 值：操作；break；
+}
+
+
+模块的导入导出
+导出：加export关键字，可以导出类方法属性字段...
+
+直接在需要导出的地方写
+export add（x:number,y:number）:number
+找个地方同一写
+export {add} from '模块名'
+
+导入：import关键字
+import {add} from  '模块名'

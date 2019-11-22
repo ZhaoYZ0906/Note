@@ -14,11 +14,24 @@ User（用户）
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser>(options=> {
+            services.AddDefaultIdentity<IdentityUser>(options=> {
 		//关于用户的一些设定，比如密码设定
                 options.Password.RequireDigit = false;
             })
             .AddEntityFrameworkStores<IdentityDbContext>();
+
+19.9.17修正
+services.AddDefaultIdentity，使用一个泛型，用户类
+services.AddIdentity，使用两个泛型，用户/角色类
+services.AddIdentityCore，使用一个泛型，用户类
+，文档上说会执行一些默认操作
+
+关于用户设定，可以直接写lanmbda也可以
+            services.Configure<IdentityOptions>(
+                o=> {
+                        o.Password.RequireDigit = false;
+                    }
+                );
 
 
 使用方法
@@ -80,7 +93,7 @@ IdentityUser自带的不具备某些属性（比如身份证号等）可以根据自己的需求对IdentityUs
                 .AddEntityFrameworkStores<IdentityDbContext<扩展类名>>();
 
 
-3 如果对IdentityUser进行扩展后，也要对IdentityDbContext进行扩展则
+3 如果对IdentityUser进行扩展后，如果要对IdentityDbContext进行扩展则
 
 
  	    services.AddDbContext<扩展DbContext>(options =>
@@ -95,7 +108,7 @@ IdentityUser自带的不具备某些属性（比如身份证号等）可以根据自己的需求对IdentityUs
 DbContext扩展类：
 
  public class 扩展类名DbContext : IdentityDbContext<ApplicationUser>
- //一定要写这个泛型，不然DbContext与扩展user连接不到
+ //一定要写这个泛型，不然DbContext与扩展user连接不到！！！！
 
 
 

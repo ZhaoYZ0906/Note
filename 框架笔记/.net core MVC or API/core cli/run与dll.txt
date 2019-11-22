@@ -1,0 +1,2 @@
+dotnet run 执行编译， 自动链接.nuget/.packages下的dll。在项目文件所以在的文件夹下执行
+dotnet dll 直接运行dll文件。在dll所在的文件夹下执行，否则读不到环境变量。

@@ -1,0 +1,59 @@
+查询树的基本解构：
+1+2 
+1为左节点 +为根节点 2为右节点
+
+由于查询树多用于构建lamdba方法进行linq查询，所以一般解构为 a==2
+
+查询树基类：Expression
+
+例子 ：a=>a.id==2 
+
+
+构建一棵树的根节点：
+ParameterExpression pe = Expression.Parameter(Type);
+假如 a=>a.id==2 如果a为student类那么type为typeof（student）
+这一步相当于构建出了 a=>
+
+左节点一般为变量：
+Expression.Property(根节点, 属性名);
+根据例子 根节点为pe 属性名为id
+
+右节点一般为常量
+Expression.Constant（值，值的类型）
+根据例子值为2，值的类型为int
+
+至此构建完了一个数的跟节点，左节点，右节点
+将三个东西链接在一起
+
+Expression.Equal(left, right);
+Equal为相等，还有不相等，大于小于等。
+至此构建完成了a=>a.id==2
+
+
+
+一颗查询树可能有很多条件比如：
+a=>a.id==2 && a.name="xx"
+这样首先需要构建两个树，注意两棵树根节点要为同一个
+
+Expression.AndAlso(left, right)
+andalso为&&,同类有||
+left为a.id==2
+right为a.name=="xx"
+
+
+
+生成完之后的树还是一个树并不是一个lanmbda，将其转换
+Expression.Lambda<Func<T, bool>>(body, pe).Compile(); 
+
+Lambda<Func<T, bool>>构建一颗lanmbda树，定义其lanmbda的func格式。注意此时为lambdaexpression类型
+Compile()编译成一个lanmbda，在此之后就是一个fnc<T,bool>的委托。
+
+
+expression是树的基类，有许多的子类
+比如MethodCallExpression调用一个方法的树
+a.name.contains("xx")
+
+PropertyExpression属性树也就是左节点
+
+ConstantExpression常量树右节点
+等等

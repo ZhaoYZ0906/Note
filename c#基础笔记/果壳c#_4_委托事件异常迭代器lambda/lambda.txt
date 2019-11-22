@@ -1,0 +1,48 @@
+lambda可以使用所在方法内的变量，称之为闭包
+
+闭包时，方法变量在lambda计算的时候被使用，而不是捕获的时候
+
+例子：
+int a=1;
+func<int,int> method=n=>n*a;//此时a被捕获
+a=10；
+cw（method（3））；//a被使用
+结果输出30
+
+lambda可以更新捕获的变量
+lambda捕获的变量生命周期为最后一次被捕获的lambda执行之后与lambda一起释放
+
+lambda内部定义的变量，每次使用lambda时都是新的
+
+func<int> method=>{int a;return ++a;}
+cw(method());//输出0
+cw(method());//输出0
+
+lambda闭包时捕获的本地变量为迭代变量时，则会捕获到同一个变量
+action【】 actions=new action【3】；
+for（int i=0;i<3;i++）
+{
+	actions[i]=()=>cw(i);
+}
+foreach(var item in actions)
+item();
+则三次输出的为333，而不是123，因为lambda在被使用的时候i=3，所以时333
+闭包时，方法变量在lambda计算的时候被使用，而不是捕获的时候
+
+如果想要输出012则需要这样
+action【】 actions=new action【3】；
+for（int i=0;i<3;i++）
+{
+	int j=i；
+	actions[i]=()=>cw(i);
+}
+foreach(var item in actions)
+item();
+输出012
+这样的话每次循环创建一个j，那么三次循环创建三个不同的j分别存放012，因为被捕获的关系生命周期演唱至lambda调用完成
+
+012和333的区别
+012中的j是三个变量虽然他们都叫j
+333中的i是一个变量
+
+注意匿名方法的闭包与lambda一致

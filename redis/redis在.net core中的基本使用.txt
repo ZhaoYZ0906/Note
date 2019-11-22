@@ -1,0 +1,20 @@
+首先需要一个包：stackexchange.redis
+
+需要注入的类
+services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+
+然后构造函数注入
+public ProductsController(MyContext context,IConnectionMultiplexer redis)
+        {
+            _context = context;
+            this.redis = redis;
+            db = redis.GetDatabase();//通过注入的类获取一个库，下面会使用db进行操作
+        }
+
+剩下的就比较简单了
+关于key-value的方法都是使用string开头
+关于list的方法都是使用list开头
+关于set的方法都是使用set开头
+关于sortset的方法都是使用sortedset开头
+
+自己像逻辑吧，不行可以看看例子

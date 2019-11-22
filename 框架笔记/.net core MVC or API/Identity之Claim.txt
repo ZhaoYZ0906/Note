@@ -1,4 +1,4 @@
-Claim（策略）
+Claim（信息组件）
 
 数据结构：两个属性 Claim.type和Claim.value
 
@@ -15,6 +15,13 @@ Controllers方面：[Authorize(Policy = "策略名称")]
             services.AddAuthorization(option =>
             {
                 option.AddPolicy("策略名称", p => p.RequireRole("角色名"));//针对角色
+//                        p.RequireRole("房管");
+//                        p.RequireRole("观众");
+//此时必须同时具有房管和观众两个角色
+
+ p.RequireRole("观众","观众");
+//此时二者有一即可
+
 		//option.AddPolicy 提供5中内置的策略，分别是针对角色/用户名/claim/。。。
              
             });

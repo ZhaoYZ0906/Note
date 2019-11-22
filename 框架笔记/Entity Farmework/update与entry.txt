@@ -1,0 +1,41 @@
+update与entry都具备更新数据的能力
+但是
+update：如果a同时关联b、c，当修改b的时候，b会关联到a，通过a在关联到c，这样生成sql的时候会生成只少三个update，性能较差，不适合更新的类嵌套类
+
+entry：进行更新的时候指挥更新b并不会关联到a，如果更新会引起关联规则的错误，会抛异常，所以当有表关联（类嵌套）的时候尽量使用entry
+myContext.Entry(province).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+例子：
+            Mayor mayor = new Mayor
+            {
+                id = 1,
+                name = "zyz",
+                ctryid = 3,
+                ctry=new Ctry {
+                    id=3,
+                    name="ctry3",
+                    population=1000000,//只能新这一个数据
+                    provinceid=1
+                }
+            };
+这是一个关联类，存在外键provinceid
+
+当两个类中只改变其中一类的情况下
+myContext.Entry(mayor).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
+只会生成一个update
+
+myContext.Update(mayor);
+会生成两个update，所以浪费了一个update的性能
+
+
+
+但是！！！
+当两个类中都用改变的时候（比如mayor的name，ctry的 population同时改变的时候）
+myContext.Entry(mayor).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
+生成两个update，改变两个类的属性，name和population都改变
+
+myContext.Update(mayor);
+生成一个update，只改变最外层类的属性！！！！！！
+只改变name因为name在外层
+
+该结论已经测试过了

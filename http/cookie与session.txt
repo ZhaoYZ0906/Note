@@ -1,0 +1,22 @@
+cookie：存在于浏览器
+session：存在于服务器
+
+cookie的生成过程：
+客户端请求服务器
+服务器记录某些信息，并生成对应的session
+服务器返回相应并且携带头set-cookie
+客户端解析头并生成对应的cookie
+以后的请求都会携带这个cookie
+
+cookie可以看成一个缓存，存储服务器和自己的某些信息
+session存储请求者的信息，以后接收请求的时候能分辨是哪个客户端
+
+cookie属性
+name	name字段为一个cookie的名称
+value	value字段为一个cookie的值
+domain	可以访问此cookie的域名
+path	可以访问此cookie的页面路径
+expires/Max-Age	此cookie超时时间。
+Size	Size字段 此cookie大小
+http	cookie的httponly属性
+secure	设置是否只能通过https来传递此条cookie

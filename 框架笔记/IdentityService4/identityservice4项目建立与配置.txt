@@ -3,7 +3,7 @@
 2 创建： dotnet new is4aspid --name xxx
   她会弹出是否添加种子数据，添加即可
 
-说明：这东西的结构有点像mvc但是不全是
+说明：这东西的结构本身是一个core
 
 3 基本文件说明：
 program：文件入口

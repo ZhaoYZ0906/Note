@@ -1,0 +1,6 @@
+2.0默认启用
+3.0：views-ViewImports.cshtml中添加：
+@addTagHelper “*,Microsoft.AspNetCore.MVC.TagHelpers”
+程序集的名字
+
+如果只在部分视图中使用那个在部分视图中添加即可

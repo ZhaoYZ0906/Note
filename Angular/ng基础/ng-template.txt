@@ -1,0 +1,19 @@
+<ng-template>等价于<div>
+但是 ng-template在浏览器中不会被显示
+
+一般结合ngif/for使用
+
+ng-template 【ngif】=“true”
+ div /div
+ div /div
+/ng-template
+
+那么这两个div都不会显示，这样起到了一控制二的效果
+
+如果
+div *ng-if=“true”
+  div /div
+  div /div
+/div
+
+那么浏览器会显示最外面的div，在结构上多了一层

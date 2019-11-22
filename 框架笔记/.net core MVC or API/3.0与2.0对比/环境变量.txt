@@ -1,0 +1,44 @@
+launchSettings.json文件中可以配置环境变量ASPNETCORE_ENVIRONMENT默认值为
+开发环境：Development
+生产环境：product
+
+在中间件配置中可以根据环境变量配置不同的中间件
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+自定义环境变量值
+            if (env.IsEnvironment("自定义的值))
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+
+
+根据环境变量使用不同的配置中间件方法：
+
+当环境变量为自定义的值是程序自动寻找 Configure+自定义值得方法
+public void Configure自定义值(IApplicationBuilder app, IWebHostEnvironment env){}
+
+
+如果找不到则使用默认方法
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env){}
+
+
+ConfigureServices方法同理
+
+startup直接指定
+startup<指定类>();
+或者
+webBuilder.UseStartup(typeof(Program));
+获取当前程序程序集，并寻找startup+自定义值 的类替换掉原来的startup
+
+
+taghelper根据环境变量使不同的html代码生效
+<envrioment include="Development">
+	//环境变量为Development时生效
+</envrioment>
+
+
+

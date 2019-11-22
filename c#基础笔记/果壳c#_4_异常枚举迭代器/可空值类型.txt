@@ -1,0 +1,92 @@
+一般来说引用类型可以为空
+string str=null
+
+但是值类型不可空
+int i=null//报错
+经过处理
+int？ i=null
+就可空，并且会被翻译成下面这种结构体
+
+可空结构体nullable<T>
+里面包含两个属性
+T value表示一个值
+bool hashvalue表示值是否为空
+
+结构体里面有一些返回值/默认值，比较等常规方法
+
+值转换到可空值类型为隐式
+可空值类型转换到值类型为显示
+注意当可空显示转换到值类型的时候，如果可空类型的hasvalue为false时，会抛出异常
+
+
+如果有两个类型 int i decimal j
+j=i
+i=（int）j
+nullable<i>=nullable<j>
+nullable<j>=i
+nullable<i>=(int)j
+
+值类型t？被装箱之后存储的为t，因为引用类型本身可以接收null
+
+引用类型拆箱到可空值类型借助as，二次转换
+int i=3
+object o=i
+int？ x=o as int？
+因为object之前(源类型)为int所以可以转换返回3
+string i=“3”
+object o=i
+int？ x=o as int？
+因为object之前(源类型)为string所以不可以转换返回null
+as运算可空值类型的时候比较差，因为需要找源类型
+
+可空值类型，进行gettype的之前会将其转换为object，如果值为空则返回异常，否则返回值的类型
+
+int？ x=new int？（）
+等价于
+int？ x=null//相当于设置x的初试状态
+
+可空值类型的比较
+int? a=2
+int? b=5
+bool x=a>b
+会被编译成
+
+bool x=（a.hasvalue&&b.hasvalue）?a.value>b.value:false
+
+关系运算符，两个操作数其中一个为null则返回false（不包括==）
+其中==正常使用
+剩下的（包括& | ）二目，一目运算符，如果有一个操作数为null则返回值为null
+
+特殊情况
+& |当一个操作数为空的时候  null | true null会被当成未知，可以当作不存在，那么返回剩下的true
+null & false 返回false 其他返回null
+
+int？ a=null
+int？b=null
+a==b//true
+a>=b//false,其中一个为null则返回false
+
+
+可空与不可空可以混合运算因为，不可空到可空时隐式的
+
+可空值类型和？？配合比较合适
+
+int？ x=null
+int y=x？？5 //y是5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

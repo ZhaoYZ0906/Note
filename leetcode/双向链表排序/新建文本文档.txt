@@ -1,0 +1,29 @@
+有一个带头节点链表，头指针为head，每个节点存在三个域data，next，down，现在链表有next进行连接，利用down（默认为null）把所有的节点按照从小到大的顺序连接起来
+
+
+void sort(Node head){
+  Node *p,*s,*q;
+  p=head.next;
+
+  //如果p为空那么遍历结束排序完成
+  
+  while(p!=null){
+
+    //重置s和q的位置
+    s=head;
+    q=head.down;
+
+    //如果q为空那么已经遍历到末尾所以循环结束
+    while((q!=null)&&(p.data<q.data)){
+      //如果p的值小于q的值，那么记录s和q的位置
+      s=q;
+      q=q.down;
+    }
+    //遍历结束之后，q的值大于p的值，s的值小于p的值。找到合适插入p的位置
+
+    //将p插入到s和q中间
+    s.down=p;
+    p.down=q;
+    p=p.next
+  }
+}

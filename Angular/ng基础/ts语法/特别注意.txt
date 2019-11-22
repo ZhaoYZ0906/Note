@@ -1,0 +1,10 @@
+假如在类中定义了一个属性/字段
+public result: Array<Contact>;
+那么此时的result，因为没有值所以未定义undefine，所以是不能使用数组相关的所有方法和属性
+
+public result: Array<Contact>=【】;
+此时的result，存在空值，所以不是未定义，所以可以使用数组相关方法
+
+将id变量的值嵌入字符串内
+注意反引号时1左边的键。。。。
+`HeroService: fetched hero id=${id}`

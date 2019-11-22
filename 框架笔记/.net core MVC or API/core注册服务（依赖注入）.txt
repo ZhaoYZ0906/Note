@@ -5,8 +5,13 @@ services.AddScoped<IMyWelcome（接口类型）,myWelcome（实例化对象）>();
  //注册服务AddTransient每访问一个事件生成一个myWelcome,
 
 AddSingleton单例生成一个myWelcome,
+整个服务器只有一个mywelcome
+
 AddScoped每次请求生成一个myWelcome
+比如aservices需要一个person类，b需要一个person类那么注入之后他们1个是1个实例
+
 AddTransient的services是每次请求（不是指Http request）都会创建一个新的实例，
+比如aservices需要一个person类，b需要一个person类那么注入之后他们两个是两个实例
 它比较适合轻量级的无状态的（Stateless）的service。
 
 
@@ -75,4 +80,14 @@ B = demos.FirstOrDefault(x => x.GetType().Name.Equals("BService"));
              A = _Provider("AService");
              B = _Provider("BService");
 }
+
+
+
+依赖注入的服务，构造函数需要参数
+存在A类，如果A的构造函数中需要接收一个B
+那么在，生成注入A之前，生成注入B即可完成，否则抛异常
+如果A需要多个参数（B，C，D），那么在A注入生成之前一定要构造BCD
+
+如果A存在多个需要参数的构造函数，那么以满足所有参数的构造函数为使用构造函数
+，如果存在多个满足所有参数的构造函数，那么以参数最多的为使用构造函数
 

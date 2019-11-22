@@ -1,0 +1,15 @@
+*ngfor="let item of items； let i=index"
+
+index是当前遍历的索引
+使用i进行保存
+
+注意：
+<ul *ngfor="let item of items"><ul>
+遍历出n个ul
+
+<li *ngfor="let item of items"><li>
+遍历出n个li
+
+这是和C#不一样的地方
+一个是执行n变所在语句里面的东西
+一个是执行n遍所在语句和里面的东西

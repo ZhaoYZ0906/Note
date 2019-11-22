@@ -1,0 +1,28 @@
+1 导入包
+MiniProfiler.AspNetCore.Mvc
+
+2 注入
+            services.AddMiniProfiler(option=> {
+                option.PopupRenderPosition = StackExchange.Profiling.RenderPosition.BottomLeft;//显示在左下角
+                option.PopupShowTimeWithChildren = true;//显示特定行
+            });
+
+3 中间件（mvc之前）
+ app.UseMiniProfiler()
+
+打开网页就可以看到左下角有个按钮，可以进行结果查看
+
+
+分析某一段代码
+using (MiniProfiler.Current.Step(name: "第一次实验")) {
+	具体代码
+            }
+
+分析一句代码
+            var str =  MiniProfiler.Current.Inline(selector:()=> Convert.ToString(a),name:"第二次实验");
+
+注意这种分析的结果要点击右下角的show trivial
+
+针对http/s分析使用customtiming，详情见博客把太麻烦了
+
+
