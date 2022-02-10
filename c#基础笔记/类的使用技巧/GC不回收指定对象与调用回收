@@ -1,0 +1,6 @@
+/* 保留 */
+gc.keepalive（xxx）; //保证xxx对象不被gc回收
+
+/* 保留对象回收 */
+xxx=null；
+gc.collect(); //gc开始执行垃圾回收操作
