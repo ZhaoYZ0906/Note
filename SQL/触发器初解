@@ -1,0 +1,29 @@
+触发器分为三类：INSERT,DELETE,UPDATE
+触发器中存在两张临时表：Inserted（操作之后的数据），Deleted（操作之前的数据）
+insert类型 Inserted有数据 Deleted无数据
+DELETE     Inserted无数据 Deleted有数据
+UPDATE    Inserted有数据 Deleted有数据
+
+触发器的基本写法：
+CREATE TRIGGER 触发器名称
+   ON  作用表名
+   AFTER 触发器类型
+AS 
+BEGIN
+
+END
+GO
+
+
+触发器实际使用场景：
+
+1、某列更新后，自动更新另外一列
+--更新coloum1之后自动更新editdate
+declare @id varchar(50)
+if(update(coloum1))
+begin
+	select @id=id from inserted
+	update aaaa set editdate=getdate() where id=@id
+end
+
+此解决方法存在问题：当coloum1从a   update 到a是也会触发，如果此情况不想触发可从Inserted和Deleted中判断coloum1值是否相同再决定是否更新
