@@ -25,3 +25,11 @@ git安装完成后执行以下操作
 
 ### 测试push命令是否成功
 
+```
+git clone ssh连接
+git add .
+git commit -m '测试链接'
+git push
+```
+
+命令有各种参数，本笔记不做记录
