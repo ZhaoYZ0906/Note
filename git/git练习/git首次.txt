@@ -1,0 +1,23 @@
+1、安装git（一直下一步即可）
+2、配置基本信息
+git config --global user.email 你的邮箱
+git config --global user.name 你的名字
+3、生成ssh
+ssh-keygen -t rsa -C "自己的github账号" 连续回车回车三次
+key生成成功后用户主目录生成.ssh文件夹。
+id_rsa是私钥，id_rsa.pub是公钥。
+4、在github上添加ssh，个人-setting-ssh-new
+title随便写，key将id_rsa.pub中的内容全部复制即可
+5、克隆一个库
+git clone 库ssh地址
+
+
+可能遇到问题：
+
+1、第一次克隆时可能提示 
+The authenticity of host 'github.com (20.205.243.166)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+造成原因为.ssh文件夹下无known_hosts文件
+解决方案 输入yes回车系统自动生成，可通过 ssh -T git@github.com 命令测试连接是否成功
