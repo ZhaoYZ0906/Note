@@ -1,2 +1,0 @@
-有空学：
-FluentValidation一个开源框架，负责写model验证（[Display(Name = "产品名称")]就像这种东西）
