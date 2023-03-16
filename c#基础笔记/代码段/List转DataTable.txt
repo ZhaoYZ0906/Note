@@ -1,0 +1,26 @@
+public DataTable toDataTable(object obj, string _tName = null)
+        {
+            Type t = obj.GetType();
+            dynamic ts = obj;
+            object tf = ts[0];
+
+            PropertyInfo[] pi = tf.GetType().GetProperties(BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
+            DataTable DT = new DataTable();
+            DT.TableName = _tName == null ? tf.GetType().ToString() : _tName;
+            foreach (PropertyInfo p in pi)
+            {
+                DT.Columns.Add(p.Name, p.PropertyType);
+            }
+
+            DataRow dr = null;
+            foreach (var v in ts)
+            {
+                dr = DT.NewRow();
+                foreach (PropertyInfo p in pi)
+                {
+                    dr[p.Name] = p.GetValue(v, null);
+                }
+                DT.Rows.Add(dr);
+            }
+            return DT;
+        }
